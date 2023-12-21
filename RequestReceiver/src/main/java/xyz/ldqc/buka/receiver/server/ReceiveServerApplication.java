@@ -1,5 +1,6 @@
 package xyz.ldqc.buka.receiver.server;
 
+import xyz.ldqc.buka.data.repository.DataRepositoryApplication;
 import xyz.ldqc.buka.receiver.server.chain.FilterRequestChain;
 import xyz.ldqc.buka.receiver.server.chain.HttpExceptionCatchChain;
 import xyz.ldqc.tightcall.chain.ChainGroup;
@@ -18,21 +19,22 @@ public class ReceiveServerApplication {
     this.httpServerApplication = httpServerApplication;
   }
 
-  public static ReceiveServerApplication boot(int port) {
+  public static ReceiveServerApplication boot(int port,
+      DataRepositoryApplication dataRepositoryApplication) {
     int availableProcessors = Runtime.getRuntime().availableProcessors();
     HttpServerApplication httpServer = HttpServerApplication.builder()
         .bind(port)
-        .chain(buildChainGroup())
+        .chain(buildChainGroup(dataRepositoryApplication))
         .execNum(availableProcessors * 2)
         .executor(NioServerExec.class)
         .boot();
     return new ReceiveServerApplication(httpServer);
   }
 
-  private static ChainGroup buildChainGroup(){
+  private static ChainGroup buildChainGroup(DataRepositoryApplication dataRepositoryApplication) {
     ChainGroup chainGroup = new DefaultChannelChainGroup();
     chainGroup.addLast(new HttpExceptionCatchChain(chainGroup));
-    chainGroup.addLast(new FilterRequestChain());
+    chainGroup.addLast(new FilterRequestChain(dataRepositoryApplication));
     return chainGroup;
   }
 

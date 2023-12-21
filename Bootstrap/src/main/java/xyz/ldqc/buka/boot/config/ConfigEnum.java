@@ -8,7 +8,9 @@ public enum ConfigEnum {
   /**
    * 端口
    */
-  PORT("server.port", "8778");
+  PORT("server.port", "8778"),
+  DATA_REPOSITORY_STORAGE_LOCATION("data.repository.storage.location", null),
+  DATA_REPOSITORY_ENGINE("data.repository.engine", "xyz.ldqc.buka.data.repository.core.support.BukaRepositoryEngine");
 
   private final String property;
 

@@ -7,6 +7,8 @@ import java.nio.channels.Channel;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import xyz.ldqc.buka.data.repository.DataRepositoryApplication;
+import xyz.ldqc.buka.receiver.aware.DataRepositoryAware;
 import xyz.ldqc.buka.receiver.server.handler.RequestHandler;
 import xyz.ldqc.buka.receiver.server.handler.annotation.RequestHandlerClass;
 import xyz.ldqc.buka.receiver.server.response.Response;
@@ -23,7 +25,10 @@ public class FilterRequestChain extends AbstractTransitiveInBoundChain {
 
   private final Map<String, RequestHandler> handlerMap;
 
-  public FilterRequestChain() {
+  private final DataRepositoryApplication dataRepositoryApplication;
+
+  public FilterRequestChain(DataRepositoryApplication dataRepositoryApplication) {
+    this.dataRepositoryApplication = dataRepositoryApplication;
     handlerMap = new HashMap<>();
     List<Class<?>> classes;
     try {
@@ -50,10 +55,18 @@ public class FilterRequestChain extends AbstractTransitiveInBoundChain {
     String path = handlerAnnotation.path();
     try {
       RequestHandler requestHandler = (RequestHandler) clazz.getConstructor().newInstance();
+      setAware(requestHandler);
       handlerMap.put(path, requestHandler);
     } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
              IllegalAccessException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private void setAware(RequestHandler requestHandler) {
+    if (requestHandler instanceof DataRepositoryAware) {
+      ((DataRepositoryAware) requestHandler).setDataRepositoryApplication(
+          dataRepositoryApplication);
     }
   }
 
