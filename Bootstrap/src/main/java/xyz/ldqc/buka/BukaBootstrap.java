@@ -7,19 +7,17 @@ import xyz.ldqc.buka.boot.ApplicationContext;
  */
 public class BukaBootstrap {
 
-  private final ApplicationContext context;
-
   /**
    * 私有化构造函数
    */
-  private BukaBootstrap(ApplicationContext context){
-    this.context = context;
+  private BukaBootstrap(){
   }
 
-  public static BukaBootstrap run(){
+  public static BukaApplication run(){
     ApplicationContext context = new ApplicationContext();
+    BukaApplication bukaApplication = new BukaApplication(context);
     context.loadContext();
-    return new BukaBootstrap(context);
+    return bukaApplication;
   }
 
 }

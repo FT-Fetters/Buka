@@ -1,5 +1,7 @@
 package xyz.ldqc.buka.receiver.server;
 
+import xyz.ldqc.buka.receiver.server.chain.FilterRequestChain;
+import xyz.ldqc.buka.receiver.server.chain.HttpExceptionCatchChain;
 import xyz.ldqc.tightcall.chain.ChainGroup;
 import xyz.ldqc.tightcall.chain.support.DefaultChannelChainGroup;
 import xyz.ldqc.tightcall.server.HttpServerApplication;
@@ -29,6 +31,8 @@ public class ReceiveServerApplication {
 
   private static ChainGroup buildChainGroup(){
     ChainGroup chainGroup = new DefaultChannelChainGroup();
+    chainGroup.addLast(new HttpExceptionCatchChain(chainGroup));
+    chainGroup.addLast(new FilterRequestChain());
     return chainGroup;
   }
 

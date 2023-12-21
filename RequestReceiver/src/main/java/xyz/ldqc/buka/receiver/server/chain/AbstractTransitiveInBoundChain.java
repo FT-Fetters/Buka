@@ -22,4 +22,10 @@ public abstract class AbstractTransitiveInBoundChain implements InboundChain, Ch
   public void setNextChain(Chain chain) {
     this.nextChain = chain;
   }
+
+  protected void next(Channel channel, Object o){
+    if (nextChain != null) {
+      nextChain.doChain(channel, o);
+    }
+  }
 }
