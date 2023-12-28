@@ -1,6 +1,6 @@
 package xyz.ldqc.buka.data.repository.config;
 
-import xyz.ldqc.buka.data.repository.core.RepositoryEngine;
+import xyz.ldqc.buka.data.repository.core.engine.RepositoryEngine;
 
 /**
  * @author Fetters

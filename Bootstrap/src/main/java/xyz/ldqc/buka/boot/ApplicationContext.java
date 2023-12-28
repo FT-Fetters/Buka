@@ -12,7 +12,7 @@ import xyz.ldqc.buka.boot.config.support.DefaultConfigLoader;
 import xyz.ldqc.buka.boot.config.support.DefaultResourceLoader;
 import xyz.ldqc.buka.data.repository.DataRepositoryApplication;
 import xyz.ldqc.buka.data.repository.config.DataRepositoryConfig;
-import xyz.ldqc.buka.data.repository.core.RepositoryEngine;
+import xyz.ldqc.buka.data.repository.core.engine.RepositoryEngine;
 import xyz.ldqc.buka.data.repository.exception.ContextException;
 import xyz.ldqc.buka.receiver.RequestReceiver;
 import xyz.ldqc.tightcall.util.ClassUtil;

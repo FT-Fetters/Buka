@@ -9,12 +9,11 @@ import java.util.List;
  */
 public class TokenParser {
 
-  private static final String[] KEYWORDS = {"CREATE", "REPO"};
+  private static final String[] KEYWORDS = {"CREATE", "REPO", "DEL", "QUERY"};
   private static final String[] OPERATORS = {"+", "-", "*", "/", ">=", "<=", ">", "<", "=="};
   private static final char[] DELIMITERS = {'(', ')', '{', '}', ';'};
 
-  private TokenParser() {
-  }
+  private TokenParser() {}
 
   public static List<Token> parse(String script) {
     return doParse(script);

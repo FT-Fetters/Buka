@@ -1,20 +1,32 @@
 package xyz.ldqc.buka.data.repository;
 
 import xyz.ldqc.buka.data.repository.config.DataRepositoryConfig;
+import xyz.ldqc.buka.data.repository.core.RepositoryContext;
+import xyz.ldqc.buka.data.repository.core.action.Action;
+import xyz.ldqc.buka.data.repository.core.action.ActionResult;
 
 /**
  * @author Fetters
  */
 public class DataRepositoryApplication {
 
-  private DataRepositoryApplication(){}
+  private final RepositoryContext repositoryContext;
 
-  public static DataRepositoryApplication run(DataRepositoryConfig config){
-    return new DataRepositoryApplication();
+  private DataRepositoryApplication(RepositoryContext repositoryContext){
+    this.repositoryContext = repositoryContext;
   }
 
-  public String execute(String script){
+  public static DataRepositoryApplication run(DataRepositoryConfig config){
+    RepositoryContext repositoryContext = new RepositoryContext(config);
+    return new DataRepositoryApplication(repositoryContext);
+  }
+
+  public ActionResult execute(String script){
     System.out.println(script);
-    return "yes";
+    return new ActionResult();
+  }
+
+  public ActionResult execute(Action action){
+    return repositoryContext.getHandlerFactory().handler(action);
   }
 }

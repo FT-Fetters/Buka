@@ -1,14 +1,18 @@
 package xyz.ldqc.buka.receiver.server.handler.support;
 
 import xyz.ldqc.buka.data.repository.DataRepositoryApplication;
+import xyz.ldqc.buka.data.repository.core.action.ActionResult;
+import xyz.ldqc.buka.data.repository.core.action.support.CreateRepoAction;
 import xyz.ldqc.buka.receiver.aware.DataRepositoryAware;
 import xyz.ldqc.buka.receiver.entity.CreateRepoEntity;
+import xyz.ldqc.buka.receiver.entity.WebResponseEntity;
 import xyz.ldqc.buka.receiver.server.handler.RequestHandler;
 import xyz.ldqc.buka.receiver.server.handler.annotation.RequestHandlerClass;
 import xyz.ldqc.buka.receiver.server.response.Response;
 import xyz.ldqc.buka.receiver.util.ObjectUtil;
 import xyz.ldqc.tightcall.protocol.http.HttpNioRequest;
 import xyz.ldqc.tightcall.protocol.http.HttpNioResponse;
+import xyz.ldqc.tightcall.util.StringUtil;
 
 /**
  * @author Fetters
@@ -23,8 +27,12 @@ public class CreateRepositoryRequestHandler implements RequestHandler, DataRepos
     String body = request.getBody();
     CreateRepoEntity createRepoEntity = ObjectUtil.json2Obj(body, CreateRepoEntity.class);
     String name = createRepoEntity.getName();
-    String execute = dataRepositoryApplication.execute(name);
-    HttpNioResponse response = Response.error(execute);
+    if (StringUtil.isBlank(name)){
+      return Response.okJson(WebResponseEntity.fail("name cannot be empty"));
+    }
+    CreateRepoAction createRepoAction = new CreateRepoAction(name);
+    ActionResult result = dataRepositoryApplication.execute(createRepoAction);
+    HttpNioResponse response = Response.error(result.toString());
     return response;
   }
 
