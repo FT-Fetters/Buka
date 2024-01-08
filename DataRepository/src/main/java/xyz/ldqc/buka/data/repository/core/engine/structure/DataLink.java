@@ -13,15 +13,19 @@ public interface DataLink<T> {
    * @param sectionName 数据段名
    * @param section 数据段内容
    */
-  void addDataSection(long dataSourceId, String sectionName ,T section);
+  void addDataSection(long dataSourceId ,Object section);
 
   /**
    * 获取数据段
    * @param sectionName 数据段名
    * @return 去重后的数据列表
    */
-  List<T> getSectionData(String sectionName);
+  List<T> getSectionData(T section);
 
-
+  /**
+   * 获取数据的类型
+   * @return Class
+   */
+  Class<?> getDataType();
 
 }

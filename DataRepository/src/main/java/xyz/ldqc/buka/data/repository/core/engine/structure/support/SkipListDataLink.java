@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataLink;
+import xyz.ldqc.buka.data.repository.core.engine.structure.DataTypeEnum;
 
 /**
  * @author Fetters
@@ -16,73 +17,99 @@ public class SkipListDataLink<T> implements DataLink<T> {
 
   private final ConcurrentSkipListMap<DataId, ConcurrentSkipListMap<Long, T>> dataMap;
 
-  private final ConcurrentHashMap<String, Long> idMap;
+  private final ConcurrentHashMap<T, Long> idMap;
 
   private final AtomicLong increaseId;
 
-  public SkipListDataLink() {
+  private Class<T> type;
+
+  public SkipListDataLink(Class<T> type) {
     this.dataMap = new ConcurrentSkipListMap<>();
     this.idMap = new ConcurrentHashMap<>();
     this.increaseId = new AtomicLong(0);
+    this.type = type;
+  }
+
+  @SuppressWarnings("unchecked")
+  private void handlerDataType(DataTypeEnum dataType) {
+    if (dataType.equals(DataTypeEnum.STRING)) {
+      this.type = (Class<T>) String.class;
+    } else if (dataType.equals(DataTypeEnum.NUMBER)) {
+      this.type = (Class<T>) Long.class;
+    }
   }
 
   @Override
-  public void addDataSection(long dataSourceId, String sectionName ,T section) {
-    long id = idMap.containsKey(sectionName) ? idMap.get(sectionName) : increaseId.getAndIncrement();
-    DataId dataId = new DataId(id, sectionName);
+  @SuppressWarnings("unchecked")
+  public void addDataSection(long dataSourceId, Object section) {
+    if (type.isAssignableFrom(section.getClass())) {
+      T t = (T) section;
+      doAddDataSection(dataSourceId, t);
+    }else {
+      throw new ClassCastException("Error type class");
+    }
+  }
+
+  public void doAddDataSection(long dataSourceId, T section) {
+    long id = idMap.containsKey(section) ? idMap.get(section) : increaseId.getAndIncrement();
+    DataId dataId = new DataId(id, section);
     ConcurrentSkipListMap<Long, T> sectionList = this.dataMap.computeIfAbsent(dataId,
         tDataId -> new ConcurrentSkipListMap<>());
-    idMap.put(sectionName, id);
+    idMap.put(section, id);
     sectionList.put(dataSourceId, section);
   }
 
   @Override
-  public List<T> getSectionData(String sectionName){
-    Long id = idMap.get(sectionName);
-    if (id == null){
+  public List<T> getSectionData(T section) {
+    Long id = idMap.get(section);
+    if (id == null) {
       return Collections.emptyList();
     }
-    DataId dataId = new DataId(id, sectionName);
+    DataId dataId = new DataId(id, section);
     ConcurrentSkipListMap<Long, T> sectionMap = this.dataMap.get(dataId);
     Collection<T> values = sectionMap.values();
     return values.stream().distinct().collect(Collectors.toList());
   }
 
+  @Override
+  public Class<?> getDataType() {
+    return this.type;
+  }
 
-  private static class DataId implements Comparable<DataId> {
+
+  private class DataId implements Comparable<DataId> {
 
     private final long id;
 
-    private final String sectionName;
+    private final T section;
 
 
-    public DataId(long id, String sectionName) {
+    public DataId(long id, T section) {
       this.id = id;
-      this.sectionName = sectionName;
+      this.section = section;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean equals(Object obj) {
-      if (obj == null) {
+      if (obj == null || obj.getClass() != this.getClass()) {
         return false;
       }
       if (this == obj) {
         return true;
       }
-      if (obj instanceof DataId) {
-        DataId dataId = (DataId) obj;
-        if (dataId.getId() != this.getId()) {
-          return false;
-        }
-        return dataId.getSectionName().equals(this.sectionName);
+      DataId.class.isAssignableFrom(obj.getClass());
+      DataId dataId = (DataId) obj;
+      if (dataId.getId() != this.getId()) {
+        return false;
       }
-      return false;
+      return dataId.getSection().equals(this.section);
     }
 
     @Override
     public int hashCode() {
-      if (this.getId() == -1){
-        return getSectionName().hashCode();
+      if (this.getId() == -1) {
+        return getSection().hashCode();
       }
       return super.hashCode();
     }
@@ -91,15 +118,15 @@ public class SkipListDataLink<T> implements DataLink<T> {
       return id;
     }
 
-    public String getSectionName() {
-      return sectionName;
+    public T getSection() {
+      return section;
     }
 
 
     @Override
     public int compareTo(DataId o) {
       long l = this.getId() - o.getId();
-      if (l == 0){
+      if (l == 0) {
         return 0;
       }
       return l > 0 ? 1 : -1;
