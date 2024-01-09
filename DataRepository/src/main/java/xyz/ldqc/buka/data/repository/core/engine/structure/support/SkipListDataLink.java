@@ -41,22 +41,23 @@ public class SkipListDataLink<T> implements DataLink<T> {
 
   @Override
   @SuppressWarnings("unchecked")
-  public void addDataSection(long dataSourceId, Object section) {
+  public long addDataSection(long dataSourceId, Object section) {
     if (type.isAssignableFrom(section.getClass())) {
       T t = (T) section;
-      doAddDataSection(dataSourceId, t);
+      return doAddDataSection(dataSourceId, t);
     }else {
       throw new ClassCastException("Error type class");
     }
   }
 
-  public void doAddDataSection(long dataSourceId, T section) {
+  public long doAddDataSection(long dataSourceId, T section) {
     long id = idMap.containsKey(section) ? idMap.get(section) : increaseId.getAndIncrement();
     DataId dataId = new DataId(id, section);
     ConcurrentSkipListMap<Long, T> sectionList = this.dataMap.computeIfAbsent(dataId,
         tDataId -> new ConcurrentSkipListMap<>());
     idMap.put(section, id);
     sectionList.put(dataSourceId, section);
+    return id;
   }
 
   @Override

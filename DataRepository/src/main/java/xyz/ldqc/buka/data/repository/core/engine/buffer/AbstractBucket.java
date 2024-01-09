@@ -15,4 +15,11 @@ public abstract class AbstractBucket {
   public String getName() {
     return name;
   }
+
+  /**
+   * 存储数据
+   * @param path 要存储的路径
+   * @return boolean
+   */
+  public abstract boolean storage(String path, String pass);
 }

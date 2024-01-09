@@ -13,7 +13,7 @@ public interface DataLink<T> {
    * @param sectionName 数据段名
    * @param section 数据段内容
    */
-  void addDataSection(long dataSourceId ,Object section);
+  long addDataSection(long dataSourceId ,Object section);
 
   /**
    * 获取数据段
