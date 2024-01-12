@@ -9,7 +9,6 @@ public class DataRepositoryConfig {
 
   private String storageLocation;
 
-  private RepositoryEngine engine;
 
   public String getStorageLocation() {
     return storageLocation;
@@ -17,14 +16,6 @@ public class DataRepositoryConfig {
 
   public void setStorageLocation(String storageLocation) {
     this.storageLocation = storageLocation;
-  }
-
-  public RepositoryEngine getEngine() {
-    return engine;
-  }
-
-  public void setEngine(RepositoryEngine engine) {
-    this.engine = engine;
   }
 
   public String getDefaultStorageLocation() {
