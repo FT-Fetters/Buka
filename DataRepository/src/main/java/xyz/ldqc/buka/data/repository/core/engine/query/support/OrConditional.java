@@ -10,19 +10,19 @@ import xyz.ldqc.buka.data.repository.core.engine.query.MultipleConditional;
 /**
  * @author Fetters
  */
-public class OrConditional<T> implements MultipleConditional<T> {
+public class OrConditional implements MultipleConditional {
 
-  private final List<Conditional<T>> conditionals;
+  private final List<Conditional> conditionals;
 
   @SafeVarargs
-  public OrConditional(Conditional<T>... conditionals){
+  public OrConditional(Conditional... conditionals){
     this.conditionals = new LinkedList<>();
     this.conditionals.addAll(Arrays.asList(conditionals));
   }
 
   @Override
-  public boolean judge(T obj) {
-    for (Conditional<T> conditional : conditionals) {
+  public boolean judge(Object obj) {
+    for (Conditional conditional : conditionals) {
       boolean judge = conditional.judge(obj);
       if (judge){
         return true;
@@ -32,12 +32,12 @@ public class OrConditional<T> implements MultipleConditional<T> {
   }
 
   @Override
-  public List<Conditional<T>> getConditionals() {
+  public List<Conditional> getConditionals() {
     return this.conditionals;
   }
 
   @Override
-  public void addConditional(Conditional<T> conditional, BoolTypeEnum type) {
+  public void addConditional(Conditional conditional, BoolTypeEnum type) {
     if (conditional != null){
       this.conditionals.add(conditional);
     }

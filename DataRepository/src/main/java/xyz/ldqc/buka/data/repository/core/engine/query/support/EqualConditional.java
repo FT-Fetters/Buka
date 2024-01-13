@@ -5,17 +5,17 @@ import xyz.ldqc.buka.data.repository.core.engine.query.Conditional;
 /**
  * @author Fetters
  */
-public class EqualConditional<T> implements Conditional<T> {
+public class EqualConditional implements Conditional {
 
-  private final T val;
+  private final Object val;
 
-  public EqualConditional(T val){
+  public EqualConditional(Object val){
     this.val = val;
   }
 
 
   @Override
-  public boolean judge(T obj) {
+  public boolean judge(Object obj) {
     return this.val.equals(obj);
   }
 }

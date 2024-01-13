@@ -1,6 +1,7 @@
 package xyz.ldqc.buka.data.repository.core.engine.structure;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * @author Fetters
@@ -27,5 +28,11 @@ public interface DataLink<T> {
    * @return Class
    */
   Class<?> getDataType();
+
+  /**
+   * 获取所有数据
+   * @return list
+   */
+  List<Entry<T, List<Long>>> sectionList();
 
 }

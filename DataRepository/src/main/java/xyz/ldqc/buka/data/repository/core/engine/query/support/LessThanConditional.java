@@ -1,21 +1,17 @@
 package xyz.ldqc.buka.data.repository.core.engine.query.support;
 
-import xyz.ldqc.buka.data.repository.core.engine.query.Conditional;
 
 /**
  * @author Fetters
  */
-public class LessThanConditional<T> implements Conditional<T> {
+public class LessThanConditional extends BaseComparableConditional {
 
-  private final Comparable<T> val;
-
-  public LessThanConditional(Comparable<T> val){
-    this.val = val;
+  public LessThanConditional(Object val){
+    initDataType(val);
   }
 
   @Override
-  public boolean judge(T obj) {
-    int i = val.compareTo(obj);
-    return i < 0;
+  public boolean judge(Object obj) {
+    return compare(obj) < 0;
   }
 }

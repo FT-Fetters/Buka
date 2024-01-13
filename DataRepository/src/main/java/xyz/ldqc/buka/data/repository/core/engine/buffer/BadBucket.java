@@ -7,9 +7,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import xyz.ldqc.buka.data.repository.core.engine.query.Conditional;
+import xyz.ldqc.buka.data.repository.core.engine.query.Sieve;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataLink;
 import xyz.ldqc.buka.data.repository.core.engine.structure.support.SkipListDataLink;
 import xyz.ldqc.buka.data.repository.exception.BadBucketException;
@@ -28,7 +33,7 @@ public class BadBucket extends AbstractBucket {
 
   public BadBucket(String name) {
     this.fieldMap = new HashMap<>();
-    if (StringUtil.isBlank(name)){
+    if (StringUtil.isBlank(name)) {
       throw new BadBucketException("name can not be null");
     }
     this.name = name;
@@ -99,6 +104,63 @@ public class BadBucket extends AbstractBucket {
     return true;
   }
 
+  @Override
+  public List<String> find(Sieve sieve) {
+    Map<String, Entry<String, Conditional>> conditionalMap = sieve.getConditionalMap();
+    Set<String> conditionalField = conditionalMap.keySet();
+    List<Long> dataIdList = getDataIdList(conditionalField);
+    return doFind(dataIdList, sieve);
+  }
+
+  private List<Long> getDataIdList(Set<String> conditionalField) {
+    Set<Long> idSet = null;
+    for (String f : conditionalField) {
+      if (!fieldMap.containsKey(f)) {
+        throw new BadBucketException("Error sieve");
+      }
+      DataLink<?> dataLink = fieldMap.get(f);
+      List<? extends Entry<?, List<Long>>> sectionList = dataLink.sectionList();
+      Set<Long> ns = new HashSet<>();
+      sectionList.forEach(s -> ns.addAll(s.getValue()));
+      if (idSet == null) {
+        idSet = ns;
+      } else {
+        idSet.retainAll(ns);
+      }
+    }
+    assert idSet != null;
+    return new ArrayList<>(idSet);
+  }
+
+  private List<String> doFind(List<Long> il, Sieve sieve) {
+    List<String> rl = new LinkedList<>();
+    il.forEach(i -> {
+      JSONObject j = dataMapping.get(Math.toIntExact(i));
+      Set<Entry<String, Entry<String, Conditional>>> entrySet = sieve.entrySet();
+      JSONObject nj = new JSONObject();
+      if (toTargetJson(j, nj, entrySet)){
+        rl.add(nj.toString());
+      }
+    });
+    return rl;
+  }
+
+  private boolean toTargetJson(JSONObject oj, JSONObject nj,
+      Set<Entry<String, Entry<String, Conditional>>> entrySet){
+    for (Entry<String, Entry<String, Conditional>> entry : entrySet) {
+      String key = entry.getKey();
+      Object o = oj.get(key);
+      Entry<String, Conditional> conditionalEntry = entry.getValue();
+      Conditional conditional = conditionalEntry.getValue();
+      if (conditional.judge(o)){
+        nj.put(conditionalEntry.getKey(), o);
+      }else {
+        return false;
+      }
+    }
+    return true;
+  }
+
   private byte[] getDataMappingBytes(byte[] pk) {
     if (dataMapping.isEmpty()) {
       return new byte[]{};
@@ -113,8 +175,8 @@ public class BadBucket extends AbstractBucket {
     return bs;
   }
 
-  private void doStorageDataMapping(String basePath, byte[] data){
-    String fileName = basePath + '/' +this.getName() + ".buk";
+  private void doStorageDataMapping(String basePath, byte[] data) {
+    String fileName = basePath + '/' + this.getName() + ".buk";
     if (!IoUtil.fileWriteBytes(fileName, data)) {
       throw new BadBucketException("Storage data mapping fail");
     }

@@ -24,7 +24,11 @@ public enum DataTypeEnum {
   /**
    * 布尔
    */
-  BOOLEAN(boolean.class, Boolean.class);
+  BOOLEAN(boolean.class, Boolean.class),
+  /**
+   * 其它
+   */
+  OTHER();
 
   private final List<Class<?>> targetClass;
 

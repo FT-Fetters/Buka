@@ -3,9 +3,10 @@ package xyz.ldqc.buka.data.repository.core.engine.query.support;
 import xyz.ldqc.buka.data.repository.core.engine.query.Conditional;
 
 /**
- * @author LENOVO 文本长度限制
+ * @author Fetters
+ * 文本长度限制
  */
-  public class TextLimitConditional<T> implements Conditional<T> {
+  public class TextLimitConditional implements Conditional {
 
   private final int minLen;
   private final int maxLen;
@@ -16,7 +17,7 @@ import xyz.ldqc.buka.data.repository.core.engine.query.Conditional;
   }
 
   @Override
-  public boolean judge(T obj) {
+  public boolean judge(Object obj) {
     int len = obj.toString().length();
     if (minLen != -1 && len < minLen) {
       return false;

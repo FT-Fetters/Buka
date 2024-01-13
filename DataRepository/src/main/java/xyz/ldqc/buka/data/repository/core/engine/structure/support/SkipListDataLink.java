@@ -1,11 +1,14 @@
 package xyz.ldqc.buka.data.repository.core.engine.structure.support;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataLink;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataTypeEnum;
@@ -45,7 +48,7 @@ public class SkipListDataLink<T> implements DataLink<T> {
     if (type.isAssignableFrom(section.getClass())) {
       T t = (T) section;
       return doAddDataSection(dataSourceId, t);
-    }else {
+    } else {
       throw new ClassCastException("Error type class");
     }
   }
@@ -75,6 +78,44 @@ public class SkipListDataLink<T> implements DataLink<T> {
   @Override
   public Class<?> getDataType() {
     return this.type;
+  }
+
+  @Override
+  public List<Entry<T, List<Long>>> sectionList() {
+    List<Entry<T, List<Long>>> rl = new ArrayList<>();
+    dataMap.forEach((k, v) -> {
+      SectionEntry<T, List<Long>> entry = new SectionEntry<>(k.getSection(),
+          new ArrayList<>(v.keySet()));
+      rl.add(entry);
+    });
+    return rl;
+  }
+
+  private static class SectionEntry<K, V> implements Entry<K, V> {
+
+    private final K key;
+
+    private final V val;
+
+    public SectionEntry(K key, V val) {
+      this.key = key;
+      this.val = val;
+    }
+
+    @Override
+    public K getKey() {
+      return key;
+    }
+
+    @Override
+    public V getValue() {
+      return val;
+    }
+
+    @Override
+    public V setValue(V value) {
+      return value;
+    }
   }
 
 

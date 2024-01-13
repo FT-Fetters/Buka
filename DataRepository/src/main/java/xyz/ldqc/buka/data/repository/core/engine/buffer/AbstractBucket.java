@@ -1,6 +1,8 @@
 package xyz.ldqc.buka.data.repository.core.engine.buffer;
 
+import java.util.List;
 import java.util.Map;
+import xyz.ldqc.buka.data.repository.core.engine.query.Sieve;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataLink;
 
 /**
@@ -19,7 +21,15 @@ public abstract class AbstractBucket {
   /**
    * 存储数据
    * @param path 要存储的路径
+   * @param pass 加密
    * @return boolean
    */
   public abstract boolean storage(String path, String pass);
+
+  /**
+   * 查找数据
+   * @param sieve 数据过滤器
+   * @return 数据集
+   */
+  public abstract List<String> find(Sieve sieve);
 }

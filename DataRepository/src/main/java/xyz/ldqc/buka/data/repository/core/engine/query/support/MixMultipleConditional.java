@@ -11,7 +11,7 @@ import xyz.ldqc.buka.data.repository.core.engine.query.MultipleConditional;
 /**
  * @author Fetters 混合多条件
  */
-public class MixMultipleConditional<T> implements MultipleConditional<T> {
+public class MixMultipleConditional implements MultipleConditional {
 
   private final List<ConditionalBody> conditionalBodyList;
 
@@ -20,7 +20,7 @@ public class MixMultipleConditional<T> implements MultipleConditional<T> {
   }
 
   @Override
-  public boolean judge(T obj) {
+  public boolean judge(Object obj) {
     Deque<Boolean> boolStack = new LinkedList<>();
     Deque<BoolTypeEnum> opStack = new LinkedList<>();
     doJudge(obj, boolStack, opStack);
@@ -36,7 +36,7 @@ public class MixMultipleConditional<T> implements MultipleConditional<T> {
     return false;
   }
 
-  private void doJudge(T obj, Deque<Boolean> boolStack, Deque<BoolTypeEnum> opStack) {
+  private void doJudge(Object obj, Deque<Boolean> boolStack, Deque<BoolTypeEnum> opStack) {
     int i = 0;
     for (ConditionalBody conditionalBody : conditionalBodyList) {
       boolean b = conditionalBody.conditional.judge(obj);
@@ -70,13 +70,13 @@ public class MixMultipleConditional<T> implements MultipleConditional<T> {
   }
 
   @Override
-  public List<Conditional<T>> getConditionals() {
+  public List<Conditional> getConditionals() {
     return conditionalBodyList.stream().map(ConditionalBody::getConditional)
         .collect(Collectors.toList());
   }
 
   @Override
-  public void addConditional(Conditional<T> conditional, BoolTypeEnum type) {
+  public void addConditional(Conditional conditional, BoolTypeEnum type) {
     if (conditional == null) {
       return;
     }
@@ -86,16 +86,16 @@ public class MixMultipleConditional<T> implements MultipleConditional<T> {
 
   private class ConditionalBody {
 
-    private final Conditional<T> conditional;
+    private final Conditional conditional;
 
     private final BoolTypeEnum type;
 
-    public ConditionalBody(Conditional<T> conditional, BoolTypeEnum type) {
+    public ConditionalBody(Conditional conditional, BoolTypeEnum type) {
       this.conditional = conditional;
       this.type = type;
     }
 
-    public Conditional<T> getConditional() {
+    public Conditional getConditional() {
       return conditional;
     }
 

@@ -1,20 +1,18 @@
 package xyz.ldqc.buka.data.repository.core.engine.query.support;
 
-import xyz.ldqc.buka.data.repository.core.engine.query.Conditional;
-
 /**
  * @author Fetters
  */
-public class NotEqualConditional<T> implements Conditional<T> {
+public class NotEqualConditional extends BaseComparableConditional {
 
-  private final T val;
 
-  public NotEqualConditional(T val){
-    this.val = val;
+
+  public NotEqualConditional(Object val){
+    initDataType(val);
   }
 
   @Override
-  public boolean judge(T obj) {
-    return !obj.equals(val);
+  public boolean judge(Object obj) {
+    return compare(obj) != 0;
   }
 }

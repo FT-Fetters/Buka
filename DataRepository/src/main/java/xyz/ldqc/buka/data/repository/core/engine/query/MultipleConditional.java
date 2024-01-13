@@ -5,18 +5,18 @@ import java.util.List;
 /**
  * @author Fetters
  */
-public interface MultipleConditional<T> extends Conditional<T>{
+public interface MultipleConditional extends Conditional {
 
   /**
    * 获取条件列表
    * @return list
    */
-  List<Conditional<T>> getConditionals();
+  List<Conditional> getConditionals();
 
   /**
    * 添加条件
    * @param conditional 条件
    */
-  void addConditional(Conditional<T> conditional, BoolTypeEnum type);
+  void addConditional(Conditional conditional, BoolTypeEnum type);
 
 }

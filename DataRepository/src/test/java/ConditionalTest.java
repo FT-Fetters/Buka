@@ -10,10 +10,10 @@ public class ConditionalTest {
 
   @Test
   public void testConditional(){
-    EqualConditional<Integer> equalConditional = new EqualConditional<>(12);
-    GreaterThanConditional<Integer> greaterThanConditional = new GreaterThanConditional<>(12);
+    EqualConditional equalConditional = new EqualConditional(12);
+    GreaterThanConditional greaterThanConditional = new GreaterThanConditional(12);
 
-    AndConditional<Integer> andConditional = new AndConditional<>(equalConditional, greaterThanConditional);
+    AndConditional andConditional = new AndConditional(equalConditional, greaterThanConditional);
 
     System.out.println(andConditional.judge(12));
   }
@@ -22,8 +22,10 @@ public class ConditionalTest {
   public void testMixConditional(){
     String str = "abc";
 
-    ConditionalConstruct<String> construct = new ConditionalConstruct<>();
-    construct.eq("ab").or(orCon -> orCon.textMatch("bc"));
+    ConditionalConstruct construct = new ConditionalConstruct();
+    construct.eq("ab").and(conditionalConstruct -> {
+      conditionalConstruct.eq("bc");
+    });
 
     System.out.println(construct.judge(str));
 

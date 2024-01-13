@@ -15,97 +15,96 @@ import xyz.ldqc.buka.data.repository.core.engine.query.support.TextMatchConditio
 /**
  * @author Fetters
  */
-public class ConditionalConstruct<T> {
+public class ConditionalConstruct {
 
-  Conditional<T> rootConditional;
+  Conditional rootConditional;
 
   public ConditionalConstruct() {
-
+    // there anything need to construct
   }
 
-  public ConditionalConstruct<T> eq(T val) {
-    EqualConditional<T> conditional = new EqualConditional<>(val);
+  public ConditionalConstruct eq(Object val) {
+    EqualConditional conditional = new EqualConditional(val);
     return addSimpleConditional(conditional);
   }
 
-  public ConditionalConstruct<T> ne(T val) {
-    NotEqualConditional<T> conditional = new NotEqualConditional<>(val);
+  public ConditionalConstruct ne(Object val) {
+    NotEqualConditional conditional = new NotEqualConditional(val);
     return addSimpleConditional(conditional);
   }
 
-  public ConditionalConstruct<T> gt(Comparable<T> val) {
-    GreaterThanConditional<T> conditional = new GreaterThanConditional<>(val);
+  public ConditionalConstruct gt(Object val) {
+    GreaterThanConditional conditional = new GreaterThanConditional(val);
     return addSimpleConditional(conditional);
   }
 
-  public ConditionalConstruct<T> lt(Comparable<T> val) {
-    LessThanConditional<T> conditional = new LessThanConditional<>(val);
+  public ConditionalConstruct lt(Object val) {
+    LessThanConditional conditional = new LessThanConditional(val);
     return addSimpleConditional(conditional);
   }
 
-  public ConditionalConstruct<T> ge(Comparable<T> val) {
-    GreaterEqualThanConditional<T> conditional = new GreaterEqualThanConditional<>(val);
+  public ConditionalConstruct ge(Object val) {
+    GreaterEqualThanConditional conditional = new GreaterEqualThanConditional(val);
     return addSimpleConditional(conditional);
   }
 
-  public ConditionalConstruct<T> le(Comparable<T> val) {
-    LessEqualThanConditional<T> conditional = new LessEqualThanConditional<>(val);
+  public ConditionalConstruct le(Object val) {
+    LessEqualThanConditional conditional = new LessEqualThanConditional(val);
     return addSimpleConditional(conditional);
   }
 
-  public ConditionalConstruct<T> and(Consumer<ConditionalConstruct<T>> consumer) {
-    ConditionalConstruct<T> conditional = new ConditionalConstruct<>();
+  public ConditionalConstruct and(Consumer<ConditionalConstruct> consumer) {
+    ConditionalConstruct conditional = new ConditionalConstruct();
     consumer.accept(conditional);
-    rootConditional = new AndConditional<>(rootConditional, conditional.getConditional());
+    rootConditional = new AndConditional(rootConditional, conditional.getConditional());
     return this;
   }
 
-  public ConditionalConstruct<T> and(Conditional<T> conditional){
-    rootConditional = new AndConditional<>(rootConditional, conditional);
+  public ConditionalConstruct and(Conditional conditional){
+    rootConditional = new AndConditional(rootConditional, conditional);
     return this;
   }
 
-  public ConditionalConstruct<T> or(Consumer<ConditionalConstruct<T>> consumer){
-    ConditionalConstruct<T> conditional = new ConditionalConstruct<>();
+  public ConditionalConstruct or(Consumer<ConditionalConstruct> consumer){
+    ConditionalConstruct conditional = new ConditionalConstruct();
     consumer.accept(conditional);
-    MixMultipleConditional<T> mix = new MixMultipleConditional<>();
+    MixMultipleConditional mix = new MixMultipleConditional();
     mix.addConditional(rootConditional, BoolTypeEnum.AND);
     mix.addConditional(conditional.getConditional(), BoolTypeEnum.OR);
     rootConditional = mix;
     return this;
   }
 
-  public ConditionalConstruct<T> textMatch(T val){
-    TextMatchConditional<T> textMatchConditional = new TextMatchConditional<>(val);
+  public ConditionalConstruct textMatch(Object val){
+    TextMatchConditional textMatchConditional = new TextMatchConditional(val);
     return addSimpleConditional(textMatchConditional);
   }
 
-  public ConditionalConstruct<T> textLimit(int minLen, int maxLen){
-    TextLimitConditional<T> textLimitConditional = new TextLimitConditional<>(minLen, maxLen);
+  public ConditionalConstruct textLimit(int minLen, int maxLen){
+    TextLimitConditional textLimitConditional = new TextLimitConditional(minLen, maxLen);
     return addSimpleConditional(textLimitConditional);
   }
 
-  private ConditionalConstruct<T> addSimpleConditional(Conditional<T> conditional) {
+  private ConditionalConstruct addSimpleConditional(Conditional conditional) {
     if (rootConditional == null) {
       rootConditional = conditional;
       return this;
     }
     if (rootConditional instanceof MultipleConditional) {
-      MultipleConditional<T> multipleConditional = (MultipleConditional<T>) rootConditional;
+      MultipleConditional multipleConditional = (MultipleConditional) rootConditional;
       multipleConditional.addConditional(conditional, BoolTypeEnum.AND);
       return this;
     }
-    rootConditional = new AndConditional<>(rootConditional, conditional);
+    rootConditional = new AndConditional(rootConditional, conditional);
     return this;
   }
 
-  public boolean judge(T obj){
+  public boolean judge(Object obj){
     return rootConditional.judge(obj);
   }
 
-  public Conditional<T> getConditional(){
+  public Conditional getConditional(){
     return rootConditional;
   }
-
 
 }
