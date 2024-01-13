@@ -39,8 +39,6 @@ public class DataLinkTest {
     }
     long finished = System.currentTimeMillis();
     System.out.println("spend time: " + (finished - current));
-    List<String> field1SectionData = dataLink.getSectionData("field1");
-    System.out.println(field1SectionData.size());
   }
 
   @Test

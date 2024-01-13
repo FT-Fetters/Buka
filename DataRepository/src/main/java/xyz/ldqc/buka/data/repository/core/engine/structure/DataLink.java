@@ -18,10 +18,10 @@ public interface DataLink<T> {
 
   /**
    * 获取数据段
-   * @param sectionName 数据段名
+   * @param section 数据段名
    * @return 去重后的数据列表
    */
-  List<T> getSectionData(T section);
+  List<Long> getSectionDataSourceIdList(T section);
 
   /**
    * 获取数据的类型
@@ -34,5 +34,12 @@ public interface DataLink<T> {
    * @return list
    */
   List<Entry<T, List<Long>>> sectionList();
+
+  /**
+   * 通过id获取数据
+   * @param id id
+   * @return T
+   */
+  T getSectionById(long id);
 
 }

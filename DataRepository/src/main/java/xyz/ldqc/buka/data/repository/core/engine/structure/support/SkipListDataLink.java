@@ -1,14 +1,12 @@
 package xyz.ldqc.buka.data.repository.core.engine.structure.support;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataLink;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataTypeEnum;
@@ -18,7 +16,7 @@ import xyz.ldqc.buka.data.repository.core.engine.structure.DataTypeEnum;
  */
 public class SkipListDataLink<T> implements DataLink<T> {
 
-  private final ConcurrentSkipListMap<DataId, ConcurrentSkipListMap<Long, T>> dataMap;
+  private final ConcurrentSkipListMap<DataId, ArrayList<Long>> dataMap;
 
   private final ConcurrentHashMap<T, Long> idMap;
 
@@ -56,23 +54,22 @@ public class SkipListDataLink<T> implements DataLink<T> {
   public long doAddDataSection(long dataSourceId, T section) {
     long id = idMap.containsKey(section) ? idMap.get(section) : increaseId.getAndIncrement();
     DataId dataId = new DataId(id, section);
-    ConcurrentSkipListMap<Long, T> sectionList = this.dataMap.computeIfAbsent(dataId,
-        tDataId -> new ConcurrentSkipListMap<>());
+    List<Long> sectionList = this.dataMap.computeIfAbsent(dataId,
+        tDataId -> new ArrayList<>());
     idMap.put(section, id);
-    sectionList.put(dataSourceId, section);
+    sectionList.add(dataSourceId);
     return id;
   }
 
   @Override
-  public List<T> getSectionData(T section) {
+  public List<Long> getSectionDataSourceIdList(T section) {
     Long id = idMap.get(section);
     if (id == null) {
       return Collections.emptyList();
     }
     DataId dataId = new DataId(id, section);
-    ConcurrentSkipListMap<Long, T> sectionMap = this.dataMap.get(dataId);
-    Collection<T> values = sectionMap.values();
-    return values.stream().distinct().collect(Collectors.toList());
+    List<Long> sectionMap = this.dataMap.get(dataId);
+    return sectionMap.stream().distinct().collect(Collectors.toList());
   }
 
   @Override
@@ -85,10 +82,16 @@ public class SkipListDataLink<T> implements DataLink<T> {
     List<Entry<T, List<Long>>> rl = new ArrayList<>();
     dataMap.forEach((k, v) -> {
       SectionEntry<T, List<Long>> entry = new SectionEntry<>(k.getSection(),
-          new ArrayList<>(v.keySet()));
+          new ArrayList<>(v));
       rl.add(entry);
     });
     return rl;
+  }
+
+  @Override
+  public T getSectionById(long id) {
+    DataId dataId = new DataId(id, null);
+    return dataMap.ceilingKey(dataId).getSection();
   }
 
   private static class SectionEntry<K, V> implements Entry<K, V> {

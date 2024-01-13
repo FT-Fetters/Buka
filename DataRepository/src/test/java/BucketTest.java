@@ -2,8 +2,13 @@ import com.alibaba.fastjson2.JSONObject;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 import org.junit.Test;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.BadBucket;
+import xyz.ldqc.buka.data.repository.core.engine.query.Conditional;
+import xyz.ldqc.buka.data.repository.core.engine.query.ConditionalConstruct;
+import xyz.ldqc.buka.data.repository.core.engine.query.Sieve;
+import xyz.ldqc.buka.data.repository.core.engine.query.SieveBuilder;
 
 public class BucketTest {
   Random random = new Random(System.currentTimeMillis());
@@ -63,5 +68,23 @@ public class BucketTest {
       }
     }
     return sb.toString();
+  }
+
+  @Test
+  public void testFind(){
+    BadBucket badBucket = new BadBucket("findTest");
+    int n = 50000;
+    for (int i = 0; i < n; i++) {
+      JSONObject j = new JSONObject();
+      j.put("age", random.nextInt(50));
+      j.put("name", randString(random.nextInt(10)));
+      badBucket.put(j.toString());
+    }
+    Sieve sieve = SieveBuilder.get()
+        .set("name", "name", construct -> construct.textLimit(9, 10).getConditional())
+        .set("age", "age", construct -> construct.gt(0).getConditional())
+        .build();
+    List<String> result = badBucket.find(sieve);
+    result.forEach(s -> System.out.println(s));
   }
 }

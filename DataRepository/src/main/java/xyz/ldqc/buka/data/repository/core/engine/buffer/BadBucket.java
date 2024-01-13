@@ -149,11 +149,12 @@ public class BadBucket extends AbstractBucket {
       Set<Entry<String, Entry<String, Conditional>>> entrySet){
     for (Entry<String, Entry<String, Conditional>> entry : entrySet) {
       String key = entry.getKey();
-      Object o = oj.get(key);
+      Long id = ((Long) oj.get(key));
+      Object data = fieldMap.get(key).getSectionById(id);
       Entry<String, Conditional> conditionalEntry = entry.getValue();
       Conditional conditional = conditionalEntry.getValue();
-      if (conditional.judge(o)){
-        nj.put(conditionalEntry.getKey(), o);
+      if (conditional.judge(data)){
+        nj.put(conditionalEntry.getKey(), data);
       }else {
         return false;
       }
