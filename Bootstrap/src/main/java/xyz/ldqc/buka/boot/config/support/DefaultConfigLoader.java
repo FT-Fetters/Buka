@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import xyz.ldqc.buka.boot.config.ConfigLoader;
 import xyz.ldqc.buka.boot.config.Resource;
+import xyz.ldqc.buka.boot.exception.ConfigLoaderException;
 
 /**
  * @author Fetters
@@ -27,7 +28,7 @@ public class DefaultConfigLoader implements ConfigLoader {
       properties.load(inputStream);
       configResource.getInputStream().close();
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new ConfigLoaderException(e.getLocalizedMessage());
     }
     this.properties = properties;
   }

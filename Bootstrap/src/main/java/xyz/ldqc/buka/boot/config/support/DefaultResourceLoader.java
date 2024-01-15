@@ -1,11 +1,11 @@
 package xyz.ldqc.buka.boot.config.support;
 
 import java.io.InputStream;
-import java.nio.file.NoSuchFileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.ldqc.buka.boot.config.Resource;
 import xyz.ldqc.buka.boot.config.ResourceLoader;
+import xyz.ldqc.buka.boot.exception.ConfigLoaderException;
 
 /**
  * @author Fetters
@@ -24,11 +24,7 @@ public class DefaultResourceLoader implements ResourceLoader {
   public Resource load(String path) {
     InputStream resourceStream = this.classLoader.getResourceAsStream(path);
     if (resourceStream == null) {
-      try {
-        throw new NoSuchFileException(path);
-      } catch (NoSuchFileException e) {
-        throw new RuntimeException(e);
-      }
+      throw new ConfigLoaderException("No such path (" + path + ")");
     }
     log.info("load resource: \"{}\"", path);
     return new Resource(path, resourceStream);

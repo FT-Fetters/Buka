@@ -23,7 +23,7 @@ import xyz.ldqc.tightcall.util.StringUtil;
  */
 public class ApplicationContext {
 
-  private final static Logger log = LoggerFactory.getLogger(ApplicationContext.class);
+  private static final Logger log = LoggerFactory.getLogger(ApplicationContext.class);
 
   private Resource configResource;
 

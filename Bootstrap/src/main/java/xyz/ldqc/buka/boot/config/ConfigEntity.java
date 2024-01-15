@@ -1,5 +1,6 @@
 package xyz.ldqc.buka.boot.config;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public class ConfigEntity {
   private final Map<ConfigEnum, String> map;
 
   public ConfigEntity(){
-    this.map = new HashMap<>();
+    this.map = new EnumMap<>(ConfigEnum.class);
   }
 
   public void setProperty(ConfigEnum property, String value){

@@ -12,6 +12,7 @@ import xyz.ldqc.buka.receiver.aware.DataRepositoryAware;
 import xyz.ldqc.buka.receiver.server.handler.RequestHandler;
 import xyz.ldqc.buka.receiver.server.handler.annotation.RequestHandlerClass;
 import xyz.ldqc.buka.receiver.server.response.Response;
+import xyz.ldqc.tightcall.exception.ChainException;
 import xyz.ldqc.tightcall.protocol.http.HttpNioRequest;
 import xyz.ldqc.tightcall.protocol.http.HttpNioResponse;
 import xyz.ldqc.tightcall.util.PackageUtil;
@@ -21,7 +22,7 @@ import xyz.ldqc.tightcall.util.PackageUtil;
  */
 public class FilterRequestChain extends AbstractTransitiveInBoundChain {
 
-  private final static String HANDLER_SUPPORT_PACKAGE = "xyz.ldqc.buka.receiver.server.handler.support";
+  private static final String HANDLER_SUPPORT_PACKAGE = "xyz.ldqc.buka.receiver.server.handler.support";
 
   private final Map<String, RequestHandler> handlerMap;
 
@@ -34,7 +35,7 @@ public class FilterRequestChain extends AbstractTransitiveInBoundChain {
     try {
       classes = PackageUtil.getPackageClasses(HANDLER_SUPPORT_PACKAGE);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new ChainException(e.getMessage());
     }
     if (classes == null) {
       return;
@@ -59,7 +60,7 @@ public class FilterRequestChain extends AbstractTransitiveInBoundChain {
       handlerMap.put(path, requestHandler);
     } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
              IllegalAccessException e) {
-      throw new RuntimeException(e);
+      throw new ChainException(e.getMessage());
     }
   }
 

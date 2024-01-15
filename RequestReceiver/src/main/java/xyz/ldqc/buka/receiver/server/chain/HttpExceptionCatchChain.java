@@ -27,7 +27,7 @@ public class HttpExceptionCatchChain extends AbstractTransitiveInBoundChain {
     try {
       next(channel, o);
     }catch (Exception e){
-      log.error("http chain exception: {}",e.getMessage(), e);
+      log.error("Http chain exception: {}",e.getMessage(), e);
       if (!(chainGroup instanceof ChannelChainGroup)){
         return;
       }

@@ -16,6 +16,7 @@ public interface MultipleConditional extends Conditional {
   /**
    * 添加条件
    * @param conditional 条件
+   * @param type 条件的数据类型
    */
   void addConditional(Conditional conditional, BoolTypeEnum type);
 

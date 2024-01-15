@@ -14,7 +14,6 @@ public class OrConditional implements MultipleConditional {
 
   private final List<Conditional> conditionals;
 
-  @SafeVarargs
   public OrConditional(Conditional... conditionals){
     this.conditionals = new LinkedList<>();
     this.conditionals.addAll(Arrays.asList(conditionals));
