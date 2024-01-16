@@ -2,6 +2,7 @@ package xyz.ldqc.buka.data.repository.core.engine.structure;
 
 import java.util.List;
 import java.util.Map.Entry;
+import xyz.ldqc.tightcall.serializer.support.KryoSerializer;
 
 /**
  * @author Fetters
@@ -41,5 +42,22 @@ public interface DataLink<T> {
    * @return T
    */
   T getSectionById(long id);
+
+  /**
+   * 转化为字节数据
+   * @return byte[]
+   */
+  byte[] toLinkBytes();
+
+  /**
+   * 字节数据转对象
+   *
+   * @param bytes 字节数据
+   * @return DataLink
+   */
+  static DataLink<?> bytes2DataLink(byte[] bytes) {
+    Object obj = KryoSerializer.serializer().deserialize(bytes);
+    return (DataLink<?>) obj;
+  }
 
 }

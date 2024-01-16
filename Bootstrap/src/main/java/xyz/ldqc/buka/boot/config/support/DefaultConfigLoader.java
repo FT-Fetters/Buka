@@ -9,6 +9,7 @@ import xyz.ldqc.buka.boot.exception.ConfigLoaderException;
 
 /**
  * @author Fetters
+ * 默认配置加载类，通过读入的的Resource解析后读取配置
  */
 public class DefaultConfigLoader implements ConfigLoader {
 

@@ -20,6 +20,7 @@ import xyz.ldqc.buka.data.repository.core.engine.structure.support.SkipListDataL
 import xyz.ldqc.buka.data.repository.exception.BadBucketException;
 import xyz.ldqc.buka.util.IoUtil;
 import xyz.ldqc.buka.util.XorUtil;
+import xyz.ldqc.tightcall.buffer.SimpleByteData;
 import xyz.ldqc.tightcall.util.StringUtil;
 
 /**
@@ -43,12 +44,21 @@ public class BadBucket extends AbstractBucket {
 
   public void put(String json) {
     JSONObject jsonObj = toJson(json);
-    Set<Entry<String, Object>> entrySet = jsonObj.entrySet();
+    doPut(jsonObj);
+    jsonObj.clear();
+  }
+
+  public  void put(JSONObject json){
+    doPut(json);
+  }
+
+  public void doPut(JSONObject json){
+    Set<Entry<String, Object>> entrySet = json.entrySet();
     if (entrySet.isEmpty()) {
       return;
     }
-    this.dataMapping.add(jsonObj);
-    int index = this.dataMapping.lastIndexOf(jsonObj);
+    this.dataMapping.add(json);
+    int index = this.dataMapping.lastIndexOf(json);
     handlerEntrySet(entrySet, index);
   }
 
@@ -98,9 +108,10 @@ public class BadBucket extends AbstractBucket {
     if (!pathFile.isDirectory()) {
       throw new InvalidPathException("Illegal path", path + "is not path");
     }
-    byte[] pk = pass.getBytes(StandardCharsets.UTF_8);
+    byte[] pk = StringUtil.isBlank(pass) ? null : pass.getBytes(StandardCharsets.UTF_8);
     byte[] dataMappingBytes = getDataMappingBytes(pk);
     doStorageDataMapping(pathFile.getAbsolutePath(), dataMappingBytes);
+    storageFieldMap(pathFile.getAbsolutePath(), pk);
     return true;
   }
 
@@ -177,9 +188,40 @@ public class BadBucket extends AbstractBucket {
   }
 
   private void doStorageDataMapping(String basePath, byte[] data) {
-    String fileName = basePath + '/' + this.getName() + ".buk";
-    if (!IoUtil.fileWriteBytes(fileName, data)) {
+    String fileName = basePath + '/' + this.getName()+ "_dm" + ".buk";
+    if (!IoUtil.fileWriteBytes(fileName, data, true)) {
       throw new BadBucketException("Storage data mapping fail");
     }
+  }
+
+  private void storageFieldMap(String basePath, byte[] pk){
+    List<byte[]> fieldMapBytes = getFieldMapBytes(pk);
+    int i = 0;
+    for (byte[] b : fieldMapBytes) {
+      String fileName = basePath + '/' + this.getName() + "_fm_" + i++ + ".buk";
+      if (!IoUtil.fileWriteBytes(fileName, b, true)){
+        throw new BadBucketException("Storage field map fail");
+      }
+    }
+
+  }
+
+  private List<byte[]> getFieldMapBytes(byte[] pk){
+    List<byte[]> r = new LinkedList<>();
+    Set<Entry<String, DataLink<?>>> entrySet = this.fieldMap.entrySet();
+    entrySet.forEach( e -> {
+      SimpleByteData byteData = new SimpleByteData(1024, Integer.MAX_VALUE);
+      byteData.writeBytes(e.getKey().getBytes(StandardCharsets.UTF_8));
+      byteData.writeBytes("bk@".getBytes(StandardCharsets.UTF_8));
+      DataLink<?> dl = e.getValue();
+      byte[] linkBytes = dl.toLinkBytes();
+      byteData.writeBytes(linkBytes);
+      byte[] bytes = byteData.readBytes();
+      if (pk != null && pk.length > 0){
+        bytes = XorUtil.encrypt(bytes, pk);
+      }
+      r.add(bytes);
+    });
+    return r;
   }
 }

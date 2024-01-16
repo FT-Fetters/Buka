@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataLink;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataTypeEnum;
+import xyz.ldqc.tightcall.serializer.support.KryoSerializer;
 
 /**
  * @author Fetters
@@ -92,6 +93,11 @@ public class SkipListDataLink<T> implements DataLink<T> {
   public T getSectionById(long id) {
     DataId dataId = new DataId(id, null);
     return dataMap.ceilingKey(dataId).getSection();
+  }
+
+  @Override
+  public byte[] toLinkBytes() {
+    return KryoSerializer.serializer().serialize(this);
   }
 
   private static class SectionEntry<K, V> implements Entry<K, V> {

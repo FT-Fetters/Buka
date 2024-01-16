@@ -5,6 +5,7 @@ import xyz.ldqc.buka.data.repository.core.engine.structure.DataTypeEnum;
 
 /**
  * @author Fetters
+ * 可比较数据条件基础类
  */
 public abstract class BaseComparableConditional implements Conditional {
 

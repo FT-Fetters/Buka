@@ -1,8 +1,10 @@
 import com.alibaba.fastjson2.JSONObject;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import org.junit.Test;
+import sun.misc.Unsafe;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.BadBucket;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.Box;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.BoxFactory;
@@ -38,24 +40,28 @@ public class BucketTest {
 
   @Test
   public void testBadBucketInsertSpeed() {
-    int t = 10;
+    int t = 3000000;
     String[] fieldName = {"name", "age", "sex", "company", "location"};
     BadBucket badBucket = new BadBucket("speedTest");
-    List<JSONObject> dataList = new LinkedList<>();
+    JSONObject[] array = new JSONObject[t];
     for (int i = 0; i < t; i++) {
       JSONObject json = new JSONObject();
       for (int j = 0; j < 3; j++) {
         json.put(fieldName[random.nextInt(fieldName.length)], randString(64));
       }
-      dataList.add(json);
+      array[i] = json;
     }
+    System.out.println("json finished");
     long time = System.currentTimeMillis();
-    for (JSONObject json : dataList) {
-      badBucket.put(json.toJSONString());
+    for (int i = 0; i < array.length; i++) {
+      JSONObject json = array[i];
+      badBucket.put(json);
+      json.clear();
+      array[i] = null;
     }
     long endTime = System.currentTimeMillis();
     System.out.println("spend time: " + (endTime - time));
-    boolean storage = badBucket.storage("F:\\迅雷下载", "bk");
+    boolean storage = badBucket.storage("F:\\迅雷下载", null);
     System.out.println(storage);
   }
 
@@ -74,7 +80,7 @@ public class BucketTest {
   @Test
   public void testFind() {
     BadBucket badBucket = new BadBucket("findTest");
-    int n = 50000;
+    int n = 500000;
     for (int i = 0; i < n; i++) {
       JSONObject j = new JSONObject();
       j.put("age", random.nextInt(50));
