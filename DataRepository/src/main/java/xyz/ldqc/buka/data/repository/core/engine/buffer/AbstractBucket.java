@@ -20,6 +20,7 @@ public abstract class AbstractBucket {
 
   /**
    * 存储数据
+   *
    * @param path 要存储的路径
    * @param pass 加密
    * @return boolean
@@ -28,8 +29,18 @@ public abstract class AbstractBucket {
 
   /**
    * 查找数据
+   *
    * @param sieve 数据过滤器
    * @return 数据集
    */
   public abstract List<String> find(Sieve sieve);
+
+  /**
+   * 加载磁盘数据
+   *
+   * @param path 路径
+   * @param pk   密钥
+   * @return 加载成功数据的数据量
+   */
+  public abstract int load(String path, String name, String pk);
 }

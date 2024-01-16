@@ -18,6 +18,7 @@ import xyz.ldqc.buka.data.repository.core.engine.query.Sieve;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataLink;
 import xyz.ldqc.buka.data.repository.core.engine.structure.support.SkipListDataLink;
 import xyz.ldqc.buka.data.repository.exception.BadBucketException;
+import xyz.ldqc.buka.util.FileUtil;
 import xyz.ldqc.buka.util.IoUtil;
 import xyz.ldqc.buka.util.XorUtil;
 import xyz.ldqc.tightcall.buffer.SimpleByteData;
@@ -45,14 +46,13 @@ public class BadBucket extends AbstractBucket {
   public void put(String json) {
     JSONObject jsonObj = toJson(json);
     doPut(jsonObj);
-    jsonObj.clear();
   }
 
-  public  void put(JSONObject json){
+  public void put(JSONObject json) {
     doPut(json);
   }
 
-  public void doPut(JSONObject json){
+  public void doPut(JSONObject json) {
     Set<Entry<String, Object>> entrySet = json.entrySet();
     if (entrySet.isEmpty()) {
       return;
@@ -123,6 +123,89 @@ public class BadBucket extends AbstractBucket {
     return doFind(dataIdList, sieve);
   }
 
+  @Override
+  public int load(String path, String name, String pk) {
+    if (StringUtil.isAnyBlank(path, name)) {
+      throw new BadBucketException("Path and name can not be empty");
+    }
+    File pf = new File(path);
+    if (!pf.isDirectory() || !pf.exists()){
+      throw new BadBucketException("Path must be directory");
+    }
+    return doLoad(pf, name, pk);
+  }
+
+  private int doLoad(File path, String name, String pk){
+    int fieldLen = loadFieldMap(path, name, pk);
+    loadDataMapping(path, name, pk);
+    return fieldLen;
+  }
+
+  private int loadFieldMap(File path, String name, String pk){
+    this.fieldMap.clear();
+    int count = -1;
+    String matchExp = name + "_fm_\\d+\\.buk";
+    List<File> matched = FileUtil.match(path, matchExp);
+    matched.forEach( f -> {
+      byte[] fbs = IoUtil.fileReadBytes(f.getAbsolutePath());
+      if (StringUtil.isNotBlank(pk)){
+        XorUtil.encryptWithoutReturn(fbs, pk.getBytes(StandardCharsets.UTF_8));
+      }
+      String fieldName = getFieldName(fbs);
+      int cutLen = (fieldName + "bk@").getBytes(StandardCharsets.UTF_8).length;
+      System.arraycopy(fbs, cutLen, fbs, 0,fbs.length - cutLen);
+      DataLink<?> dataLink = DataLink.bytes2DataLink(fbs);
+      this.fieldMap.put(fieldName, dataLink);
+    });
+    return count;
+  }
+
+  private int loadDataMapping(File path, String name, String pk){
+    this.dataMapping.clear();
+    String fn = name + "_dm.buk";
+    File f = new File(path.getAbsolutePath() + "/" + fn);
+    if (!f.exists() || f.isDirectory()){
+      throw new BadBucketException("Load data mapping fail");
+    }
+    byte[] bytes = IoUtil.fileReadBytes(f.getAbsolutePath());
+    if (StringUtil.isNotBlank(pk)){
+      XorUtil.encryptWithoutReturn(bytes, pk.getBytes(StandardCharsets.UTF_8));
+    }
+    String orgData = new String(bytes);
+    orgData = orgData.replaceFirst("BK_dm", "");
+    String[] ls = orgData.split("\n");
+    for (String l : ls) {
+      JSONObject j = new JSONObject();
+      String[] sp = l.split(",");
+      for (String s : sp) {
+        String[] kv = s.split(":");
+        j.put(kv[0], kv[1]);
+      }
+      this.dataMapping.add(j);
+    }
+    return -1;
+
+  }
+
+  private String getFieldName(byte[] bytes){
+    byte[] sp = "bk@".getBytes(StandardCharsets.UTF_8);
+    for (int i = 0; i < bytes.length; i++) {
+      for (int j = 0; j < sp.length; j++) {
+        if (bytes[i+j] != sp[j]){
+          break;
+        }
+        if (j == sp.length - 1){
+          byte[] rb = new byte[i];
+          System.arraycopy(bytes, 0, rb, 0, i);
+          return new String(rb);
+        }
+      }
+    }
+    return new String(bytes);
+  }
+
+
+
   private List<Long> getDataIdList(Set<String> conditionalField) {
     Set<Long> idSet = null;
     for (String f : conditionalField) {
@@ -149,7 +232,7 @@ public class BadBucket extends AbstractBucket {
       JSONObject j = dataMapping.get(Math.toIntExact(i));
       Set<Entry<String, Entry<String, Conditional>>> entrySet = sieve.entrySet();
       JSONObject nj = new JSONObject();
-      if (toTargetJson(j, nj, entrySet)){
+      if (toTargetJson(j, nj, entrySet)) {
         rl.add(nj.toString());
       }
     });
@@ -157,21 +240,28 @@ public class BadBucket extends AbstractBucket {
   }
 
   private boolean toTargetJson(JSONObject oj, JSONObject nj,
-      Set<Entry<String, Entry<String, Conditional>>> entrySet){
+      Set<Entry<String, Entry<String, Conditional>>> entrySet) {
     for (Entry<String, Entry<String, Conditional>> entry : entrySet) {
       String key = entry.getKey();
-      Long id = ((Long) oj.get(key));
+      Long id;
+      Object o = oj.get(key);
+      if (o instanceof CharSequence){
+        id = Long.valueOf(((String) o));
+      }else {
+        id = ((Long) o);
+      }
       Object data = fieldMap.get(key).getSectionById(id);
       Entry<String, Conditional> conditionalEntry = entry.getValue();
       Conditional conditional = conditionalEntry.getValue();
-      if (conditional.judge(data)){
+      if (conditional.judge(data)) {
         nj.put(conditionalEntry.getKey(), data);
-      }else {
+      } else {
         return false;
       }
     }
     return true;
   }
+
 
   private byte[] getDataMappingBytes(byte[] pk) {
     if (dataMapping.isEmpty()) {
@@ -183,33 +273,33 @@ public class BadBucket extends AbstractBucket {
       sb.setCharAt(sb.length() - 1, '\n');
     });
     byte[] bs = sb.toString().getBytes(StandardCharsets.UTF_8);
-    bs = XorUtil.encrypt(bs, pk);
+    XorUtil.encryptWithoutReturn(bs, pk);
     return bs;
   }
 
   private void doStorageDataMapping(String basePath, byte[] data) {
-    String fileName = basePath + '/' + this.getName()+ "_dm" + ".buk";
+    String fileName = basePath + '/' + this.getName() + "_dm" + ".buk";
     if (!IoUtil.fileWriteBytes(fileName, data, true)) {
       throw new BadBucketException("Storage data mapping fail");
     }
   }
 
-  private void storageFieldMap(String basePath, byte[] pk){
+  private void storageFieldMap(String basePath, byte[] pk) {
     List<byte[]> fieldMapBytes = getFieldMapBytes(pk);
     int i = 0;
     for (byte[] b : fieldMapBytes) {
       String fileName = basePath + '/' + this.getName() + "_fm_" + i++ + ".buk";
-      if (!IoUtil.fileWriteBytes(fileName, b, true)){
+      if (!IoUtil.fileWriteBytes(fileName, b, true)) {
         throw new BadBucketException("Storage field map fail");
       }
     }
 
   }
 
-  private List<byte[]> getFieldMapBytes(byte[] pk){
+  private List<byte[]> getFieldMapBytes(byte[] pk) {
     List<byte[]> r = new LinkedList<>();
     Set<Entry<String, DataLink<?>>> entrySet = this.fieldMap.entrySet();
-    entrySet.forEach( e -> {
+    entrySet.forEach(e -> {
       SimpleByteData byteData = new SimpleByteData(1024, Integer.MAX_VALUE);
       byteData.writeBytes(e.getKey().getBytes(StandardCharsets.UTF_8));
       byteData.writeBytes("bk@".getBytes(StandardCharsets.UTF_8));
@@ -217,8 +307,11 @@ public class BadBucket extends AbstractBucket {
       byte[] linkBytes = dl.toLinkBytes();
       byteData.writeBytes(linkBytes);
       byte[] bytes = byteData.readBytes();
-      if (pk != null && pk.length > 0){
+      if (pk != null && pk.length > 0) {
         bytes = XorUtil.encrypt(bytes, pk);
+      }
+      if (pk != null && pk.length > 0){
+        XorUtil.encryptWithoutReturn(bytes, pk);
       }
       r.add(bytes);
     });

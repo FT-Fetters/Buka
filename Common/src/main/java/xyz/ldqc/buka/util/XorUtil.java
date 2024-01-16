@@ -31,4 +31,14 @@ public class XorUtil {
     return result;
   }
 
+  public static void encryptWithoutReturn(byte[] data, byte[] key){
+    if (data == null || data.length == 0 || key == null || key.length == 0) {
+      return;
+    }
+    for (int i = 0; i < data.length; i++) {
+      // 数据与密钥异或, 再与循环变量的低8位异或（增加复杂度）
+      data[i] = (byte) (data[i] ^ key[i % key.length] ^ (i & 0xFF));
+    }
+  }
+
 }

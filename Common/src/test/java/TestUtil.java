@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 import xyz.ldqc.buka.util.ClassUtil;
+import xyz.ldqc.buka.util.IoUtil;
 
 public class TestUtil {
 
@@ -16,6 +17,12 @@ public class TestUtil {
     }
     Type type = ((ParameterizedType) superclass).getActualTypeArguments()[0];
     System.out.println();
+  }
+
+  @Test
+  public void testFileReadBytes(){
+    byte[] bytes = IoUtil.fileReadBytes("F:\\迅雷下载\\speedTest_fm_4.buk");
+    System.out.println(bytes.length);
   }
 
 }

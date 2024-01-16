@@ -40,7 +40,7 @@ public class BucketTest {
 
   @Test
   public void testBadBucketInsertSpeed() {
-    int t = 3000000;
+    int t = 10;
     String[] fieldName = {"name", "age", "sex", "company", "location"};
     BadBucket badBucket = new BadBucket("speedTest");
     JSONObject[] array = new JSONObject[t];
@@ -56,7 +56,7 @@ public class BucketTest {
     for (int i = 0; i < array.length; i++) {
       JSONObject json = array[i];
       badBucket.put(json);
-      json.clear();
+//      json.clear();
       array[i] = null;
     }
     long endTime = System.currentTimeMillis();
@@ -80,7 +80,7 @@ public class BucketTest {
   @Test
   public void testFind() {
     BadBucket badBucket = new BadBucket("findTest");
-    int n = 500000;
+    int n = 10;
     for (int i = 0; i < n; i++) {
       JSONObject j = new JSONObject();
       j.put("age", random.nextInt(50));
@@ -98,5 +98,43 @@ public class BucketTest {
         .create();
     box.putAll(result);
     result.forEach(s -> System.out.println(s));
+  }
+
+  @Test
+  public void testLoad(){
+    String path = "F:\\迅雷下载";
+    String name = "findTest";
+    BadBucket badBucket = new BadBucket(name);
+    badBucket.load(path, name, null);
+  }
+
+  @Test
+  public void testStorageAndLoad(){
+    BadBucket badBucket = new BadBucket("findTest");
+    int n = 10;
+    for (int i = 0; i < n; i++) {
+      JSONObject j = new JSONObject();
+      j.put("age", random.nextInt(50));
+      j.put("name", randString(random.nextInt(10)));
+      badBucket.put(j.toString());
+    }
+    Sieve sieve = SieveBuilder.get()
+        .set("name", "name", construct -> construct.textLimit(0, 10).getConditional())
+        .set("age", "age", construct -> construct.gt(0).getConditional())
+        .build();
+    List<String> result = badBucket.find(sieve);
+    Box box = BoxFactory.get()
+        .lattice("name", DataTypeEnum.STRING)
+        .lattice("age", DataTypeEnum.NUMBER)
+        .create();
+    box.putAll(result);
+    result.forEach(s -> System.out.println(s));
+    System.out.println("-------------------------");
+    badBucket.storage("F:\\迅雷下载",  null);
+    badBucket.load("F:\\迅雷下载","findTest", null);
+    result.clear();
+    result = badBucket.find(sieve);
+    result.forEach(s -> System.out.println(s));
+
   }
 }
