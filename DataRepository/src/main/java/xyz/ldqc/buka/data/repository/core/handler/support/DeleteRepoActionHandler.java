@@ -1,34 +1,29 @@
 package xyz.ldqc.buka.data.repository.core.handler.support;
 
 import xyz.ldqc.buka.data.repository.core.action.ActionResult;
-import xyz.ldqc.buka.data.repository.core.action.support.CreateRepoAction;
+import xyz.ldqc.buka.data.repository.core.action.support.DeleteRepoAction;
 import xyz.ldqc.buka.data.repository.core.aware.DataBufferPoolAware;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.DataBufferPool;
-import xyz.ldqc.buka.data.repository.core.engine.buffer.RepositoryBuffer;
 import xyz.ldqc.buka.data.repository.core.handler.ActionHandler;
 
 /**
  * @author Fetters
  */
-public class CreateRepoActionHandler implements ActionHandler<CreateRepoAction>,
+public class DeleteRepoActionHandler implements ActionHandler<DeleteRepoAction>,
     DataBufferPoolAware {
 
   private DataBufferPool dataBufferPool;
 
   @Override
-  public Class<CreateRepoAction> getActionClass() {
-    return CreateRepoAction.class;
+  public Class<DeleteRepoAction> getActionClass() {
+    return DeleteRepoAction.class;
   }
 
   @Override
-  public ActionResult handler(CreateRepoAction action) {
+  public ActionResult handler(DeleteRepoAction action) {
     String repoName = action.getRepoName();
-    RepositoryBuffer repository = dataBufferPool.createRepository(repoName);
-    if (repository == null) {
-      return new ActionResult("Create fail");
-    } else {
-      return new ActionResult("Created");
-    }
+    dataBufferPool.deleteRepository(repoName);
+    return new ActionResult("Deleted");
   }
 
   @Override

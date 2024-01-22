@@ -1,6 +1,6 @@
 package xyz.ldqc.buka;
 
-import xyz.ldqc.buka.boot.ApplicationContext;
+import xyz.ldqc.buka.boot.BootApplicationContext;
 
 /**
  * @author Fetters
@@ -14,7 +14,7 @@ public class BukaBootstrap {
   }
 
   public static BukaApplication run(){
-    ApplicationContext context = new ApplicationContext();
+    BootApplicationContext context = new BootApplicationContext();
     BukaApplication bukaApplication = new BukaApplication(context);
     context.loadContext();
     return bukaApplication;

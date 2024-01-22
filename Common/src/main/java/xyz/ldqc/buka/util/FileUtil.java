@@ -33,6 +33,10 @@ public class FileUtil {
     return r;
   }
 
+  public static boolean isDir(File file){
+    return file.exists() && file.isDirectory();
+  }
+
 
 
 

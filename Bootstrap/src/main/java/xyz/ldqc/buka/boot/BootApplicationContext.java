@@ -21,9 +21,9 @@ import xyz.ldqc.tightcall.util.StringUtil;
 /**
  * @author Fetters
  */
-public class ApplicationContext {
+public class BootApplicationContext {
 
-  private static final Logger log = LoggerFactory.getLogger(ApplicationContext.class);
+  private static final Logger log = LoggerFactory.getLogger(BootApplicationContext.class);
 
   private Resource configResource;
 
@@ -118,8 +118,7 @@ public class ApplicationContext {
     }
     // 仓库引擎
     String engineClass = config.getValue(ConfigEnum.DATA_REPOSITORY_ENGINE);
-    RepositoryEngine repositoryEngine = loadEngine(engineClass);
-    repositoryConfig.setEngine(repositoryEngine);
+    repositoryConfig.setEngineClassName(engineClass);
     return repositoryConfig;
   }
 
@@ -140,24 +139,5 @@ public class ApplicationContext {
     dataStorageLocation.setStorageLocation(file.getAbsolutePath());
   }
 
-  /**
-   * 加载仓库引擎
-   *
-   * @param engineClassName 引擎类名
-   * @return RepositoryEngine
-   */
-  private RepositoryEngine loadEngine(String engineClassName) {
-    ClassLoader classLoader = ClassUtil.getClassLoader();
-    try {
-      Class<?> engineClass = classLoader.loadClass(engineClassName);
-      return (RepositoryEngine) engineClass.getConstructor()
-          .newInstance();
-    } catch (ClassNotFoundException e) {
-      throw new ContextException("unknown engine class");
-    } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-             NoSuchMethodException e) {
-      throw new ContextException(e.getMessage());
-    }
-  }
 
 }

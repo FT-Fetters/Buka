@@ -18,4 +18,8 @@ public class BukaRepositoryEngine implements RepositoryEngine {
     this.bufferPool = new DataBufferPool(config);
   }
 
+  @Override
+  public DataBufferPool getDataBufferPool() {
+    return bufferPool;
+  }
 }

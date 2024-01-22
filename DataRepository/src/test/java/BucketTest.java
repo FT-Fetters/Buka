@@ -1,10 +1,7 @@
 import com.alibaba.fastjson2.JSONObject;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import org.junit.Test;
-import sun.misc.Unsafe;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.BadBucket;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.Box;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.BoxFactory;
@@ -42,7 +39,7 @@ public class BucketTest {
   public void testBadBucketInsertSpeed() {
     int t = 10;
     String[] fieldName = {"name", "age", "sex", "company", "location"};
-    BadBucket badBucket = new BadBucket("speedTest");
+    BadBucket badBucket = new BadBucket("bucketTest");
     JSONObject[] array = new JSONObject[t];
     for (int i = 0; i < t; i++) {
       JSONObject json = new JSONObject();
@@ -61,7 +58,7 @@ public class BucketTest {
     }
     long endTime = System.currentTimeMillis();
     System.out.println("spend time: " + (endTime - time));
-    boolean storage = badBucket.storage("F:\\迅雷下载", null);
+    boolean storage = badBucket.storage("F:\\workspace\\buka", null);
     System.out.println(storage);
   }
 

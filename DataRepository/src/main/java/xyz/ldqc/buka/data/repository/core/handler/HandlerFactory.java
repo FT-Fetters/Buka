@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import xyz.ldqc.buka.data.repository.core.action.Action;
 import xyz.ldqc.buka.data.repository.core.action.ActionResult;
+import xyz.ldqc.buka.data.repository.core.aware.DataBufferPoolAware;
+import xyz.ldqc.buka.data.repository.core.engine.RepositoryEngine;
+import xyz.ldqc.buka.data.repository.core.engine.buffer.DataBufferPool;
 import xyz.ldqc.buka.data.repository.exception.HandlerFactoryException;
 import xyz.ldqc.tightcall.util.PackageUtil;
 
@@ -20,7 +23,11 @@ public class HandlerFactory {
 
   private final Map<Class<?>, ActionHandler<?>> handlerMap;
 
-  private HandlerFactory(){
+  private final RepositoryEngine engine;
+
+
+  private HandlerFactory(RepositoryEngine engine){
+    this.engine = engine;
     List<Class<?>> classes;
     try {
       classes = PackageUtil.getPackageClasses(HANDLER_PACKAGE);
@@ -31,6 +38,7 @@ public class HandlerFactory {
         }
         ActionHandler<?> handler = (ActionHandler<?>) clazz.getConstructor().newInstance();
         Class<?> actionClass = handler.getActionClass();
+        setHandlerAware(handler);
         handlerMap.put(actionClass, handler);
       }
     } catch (IOException | InvocationTargetException | InstantiationException |
@@ -40,8 +48,25 @@ public class HandlerFactory {
 
   }
 
-  public static HandlerFactory getInstance(){
-    return new HandlerFactory();
+  private void setHandlerAware(Object handler){
+    if (handler instanceof DataBufferPoolAware){
+      setRepositoryBufferAware(((DataBufferPoolAware) handler));
+    }
+  }
+
+  private void setRepositoryBufferAware(DataBufferPoolAware aware){
+    if (engine == null){
+      throw new HandlerFactoryException("Engine is null");
+    }
+    DataBufferPool dataBufferPool = engine.getDataBufferPool();
+    if (dataBufferPool == null){
+      throw new HandlerFactoryException("Data buffer pool is null");
+    }
+    aware.setDataBufferPool(dataBufferPool);
+  }
+
+  public static HandlerFactory getInstance(RepositoryEngine engine){
+    return new HandlerFactory(engine);
   }
 
   @SuppressWarnings("unchecked")

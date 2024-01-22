@@ -23,7 +23,7 @@ public class DataRepositoryApplication {
 
   public ActionResult execute(String script){
     System.out.println(script);
-    return new ActionResult();
+    return new ActionResult("unknown");
   }
 
   public ActionResult execute(Action action){

@@ -1,16 +1,16 @@
 package xyz.ldqc.buka;
 
-import xyz.ldqc.buka.boot.ApplicationContext;
+import xyz.ldqc.buka.boot.BootApplicationContext;
 
 /**
  * @author Fetters
  */
 public class BukaApplication {
 
-  private final ApplicationContext context;
+  private final BootApplicationContext context;
 
 
-  public BukaApplication(ApplicationContext context) {
+  public BukaApplication(BootApplicationContext context) {
     this.context = context;
   }
 }
