@@ -11,6 +11,7 @@ import xyz.ldqc.buka.data.repository.core.action.ActionResult;
 import xyz.ldqc.buka.data.repository.core.aware.DataBufferPoolAware;
 import xyz.ldqc.buka.data.repository.core.engine.RepositoryEngine;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.DataBufferPool;
+import xyz.ldqc.buka.data.repository.exception.ActionHandlerNotFoundException;
 import xyz.ldqc.buka.data.repository.exception.HandlerFactoryException;
 import xyz.ldqc.tightcall.util.PackageUtil;
 
@@ -73,6 +74,9 @@ public class HandlerFactory {
   public ActionResult handler(Action action){
     Class<? extends Action> actionClass = action.getClass();
     ActionHandler<Action> handler = (ActionHandler<Action>) handlerMap.get(actionClass);
+    if (handler == null){
+      throw new ActionHandlerNotFoundException("Action handler not found: " + action.getClass().getName());
+    }
     return handler.handler(action);
   }
 

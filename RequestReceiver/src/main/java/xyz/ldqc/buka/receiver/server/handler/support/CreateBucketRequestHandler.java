@@ -2,9 +2,9 @@ package xyz.ldqc.buka.receiver.server.handler.support;
 
 import xyz.ldqc.buka.data.repository.DataRepositoryApplication;
 import xyz.ldqc.buka.data.repository.core.action.ActionResult;
-import xyz.ldqc.buka.data.repository.core.action.support.DeleteRepoAction;
+import xyz.ldqc.buka.data.repository.core.action.support.CreateBucketAction;
 import xyz.ldqc.buka.receiver.aware.DataRepositoryAware;
-import xyz.ldqc.buka.receiver.entity.DeleteRepoEntity;
+import xyz.ldqc.buka.receiver.entity.CreateBucketEntity;
 import xyz.ldqc.buka.receiver.entity.WebResponseEntity;
 import xyz.ldqc.buka.receiver.server.handler.DataRepositoryRequestHandler;
 import xyz.ldqc.buka.receiver.server.handler.RequestHandler;
@@ -18,11 +18,10 @@ import xyz.ldqc.tightcall.util.StringUtil;
 /**
  * @author Fetters
  */
-@RequestHandlerClass(path = "/del/repo", method = "POST")
-public class DeleteRepositoryRequestHandler implements DataRepositoryRequestHandler {
+@RequestHandlerClass(path = "/create/bucket", method = "POST")
+public class CreateBucketRequestHandler implements DataRepositoryRequestHandler {
 
   private DataRepositoryApplication dataRepositoryApplication;
-
 
   @Override
   public void setDataRepositoryApplication(DataRepositoryApplication dataRepositoryApplication) {
@@ -31,13 +30,14 @@ public class DeleteRepositoryRequestHandler implements DataRepositoryRequestHand
 
   @Override
   public HttpNioResponse doHandler(HttpNioRequest request) {
-    DeleteRepoEntity deleteRepoEntity = RequestUtil.body2Obj(request, DeleteRepoEntity.class);
-    String name = deleteRepoEntity.getName();
-    if (StringUtil.isBlank(name)) {
-      return Response.okJson(WebResponseEntity.fail("name cannot be empty"));
+    CreateBucketEntity createBucketEntity = RequestUtil.body2Obj(request, CreateBucketEntity.class);
+    String repo = createBucketEntity.getRepo();
+    String name = createBucketEntity.getName();
+    if (StringUtil.isAnyBlank(repo, name)) {
+      return Response.okJson(WebResponseEntity.fail("repo and name cannot be empty"));
     }
-    DeleteRepoAction deleteRepoAction = new DeleteRepoAction(name);
-    ActionResult result = dataRepositoryApplication.execute(deleteRepoAction);
+    CreateBucketAction createBucketAction = new CreateBucketAction(repo, name);
+    ActionResult result = dataRepositoryApplication.execute(createBucketAction);
     return Response.okJson(result);
   }
 }

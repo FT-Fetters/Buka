@@ -3,6 +3,9 @@ package xyz.ldqc.buka.data.repository.core.engine.buffer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import xyz.ldqc.buka.data.repository.config.DataRepositoryConfig;
@@ -69,9 +72,29 @@ public class DataBufferPool {
       throw new RepositoryBufferException("Repository is not exists");
     }
     try {
+      repoBuffer.remove(name);
       Files.delete(targetFileDir.toPath());
     } catch (IOException e) {
       throw new RepositoryBufferException("Can not delete repository");
     }
+  }
+
+  public List<String> getAllRepositoryName(){
+    String storageLocation = config.getStorageLocation();
+    File file = new File(storageLocation);
+    if (!FileUtil.isDir(file)){
+      throw new RepositoryBufferException("May the storage location have some problems");
+    }
+    File[] files = file.listFiles();
+    List<String> rl = new LinkedList<>();
+    if (files == null || files.length == 0) {
+      return Collections.emptyList();
+    }
+    Arrays.stream(files).forEach(f -> {
+      if (FileUtil.isDir(f)){
+        rl.add(f.getName());
+      }
+    });
+    return rl;
   }
 }

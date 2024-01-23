@@ -2,10 +2,10 @@ package xyz.ldqc.buka.receiver.server.handler.support;
 
 import xyz.ldqc.buka.data.repository.DataRepositoryApplication;
 import xyz.ldqc.buka.data.repository.core.action.ActionResult;
-import xyz.ldqc.buka.data.repository.core.action.support.DeleteRepoAction;
+import xyz.ldqc.buka.data.repository.core.action.support.ShowBucketAction;
+import xyz.ldqc.buka.data.repository.core.action.support.ShowRepositoryAction;
 import xyz.ldqc.buka.receiver.aware.DataRepositoryAware;
-import xyz.ldqc.buka.receiver.entity.DeleteRepoEntity;
-import xyz.ldqc.buka.receiver.entity.WebResponseEntity;
+import xyz.ldqc.buka.receiver.entity.ShowBucketEntity;
 import xyz.ldqc.buka.receiver.server.handler.DataRepositoryRequestHandler;
 import xyz.ldqc.buka.receiver.server.handler.RequestHandler;
 import xyz.ldqc.buka.receiver.server.handler.annotation.RequestHandlerClass;
@@ -18,11 +18,10 @@ import xyz.ldqc.tightcall.util.StringUtil;
 /**
  * @author Fetters
  */
-@RequestHandlerClass(path = "/del/repo", method = "POST")
-public class DeleteRepositoryRequestHandler implements DataRepositoryRequestHandler {
+@RequestHandlerClass(path = "/show/bucket", method = "POST")
+public class ShowBucketRequestHandler implements DataRepositoryRequestHandler {
 
   private DataRepositoryApplication dataRepositoryApplication;
-
 
   @Override
   public void setDataRepositoryApplication(DataRepositoryApplication dataRepositoryApplication) {
@@ -31,13 +30,12 @@ public class DeleteRepositoryRequestHandler implements DataRepositoryRequestHand
 
   @Override
   public HttpNioResponse doHandler(HttpNioRequest request) {
-    DeleteRepoEntity deleteRepoEntity = RequestUtil.body2Obj(request, DeleteRepoEntity.class);
-    String name = deleteRepoEntity.getName();
-    if (StringUtil.isBlank(name)) {
-      return Response.okJson(WebResponseEntity.fail("name cannot be empty"));
+    ShowBucketEntity showBucketEntity = RequestUtil.body2Obj(request, ShowBucketEntity.class);
+    String repo = showBucketEntity.getRepo();
+    if (StringUtil.isBlank(repo)){
+      return Response.okJson("Unknown repository");
     }
-    DeleteRepoAction deleteRepoAction = new DeleteRepoAction(name);
-    ActionResult result = dataRepositoryApplication.execute(deleteRepoAction);
+    ActionResult result = dataRepositoryApplication.execute(new ShowBucketAction(repo));
     return Response.okJson(result);
   }
 }

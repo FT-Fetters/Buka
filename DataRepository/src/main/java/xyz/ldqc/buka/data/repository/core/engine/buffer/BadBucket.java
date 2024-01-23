@@ -129,7 +129,7 @@ public class BadBucket extends AbstractBucket {
       throw new BadBucketException("Path and name can not be empty");
     }
     File pf = new File(path);
-    if (!pf.isDirectory() || !pf.exists()){
+    if (!FileUtil.isDir(pf)){
       throw new BadBucketException("Path must be directory");
     }
     return doLoad(pf, name, pk);
@@ -264,9 +264,6 @@ public class BadBucket extends AbstractBucket {
 
 
   private byte[] getDataMappingBytes(byte[] pk) {
-    if (dataMapping.isEmpty()) {
-      return new byte[]{};
-    }
     StringBuilder sb = new StringBuilder(BUKA_MAGIC_NUMBER);
     dataMapping.forEach(j -> {
       j.forEach((k, v) -> sb.append(k).append(':').append(v).append(','));
