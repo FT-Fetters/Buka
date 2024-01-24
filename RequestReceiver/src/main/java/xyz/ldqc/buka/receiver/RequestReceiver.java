@@ -15,9 +15,9 @@ public class RequestReceiver {
   }
 
   public static RequestReceiver create(int port,
-      DataRepositoryApplication dataRepositoryApplication) {
+      DataRepositoryApplication dataRepositoryApplication, String authKey) {
     ReceiveServerApplication receiveServerApplication = ReceiveServerApplication.boot(port,
-        dataRepositoryApplication);
+        dataRepositoryApplication, authKey);
     RequestReceiver requestReceiver = new RequestReceiver();
     requestReceiver.serverApplication = receiveServerApplication;
     return requestReceiver;

@@ -1,7 +1,6 @@
 package xyz.ldqc.buka.boot;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.ldqc.buka.boot.config.ConfigEntity;
@@ -12,10 +11,8 @@ import xyz.ldqc.buka.boot.config.support.DefaultConfigLoader;
 import xyz.ldqc.buka.boot.config.support.DefaultResourceLoader;
 import xyz.ldqc.buka.data.repository.DataRepositoryApplication;
 import xyz.ldqc.buka.data.repository.config.DataRepositoryConfig;
-import xyz.ldqc.buka.data.repository.core.engine.RepositoryEngine;
 import xyz.ldqc.buka.data.repository.exception.ContextException;
 import xyz.ldqc.buka.receiver.RequestReceiver;
-import xyz.ldqc.tightcall.util.ClassUtil;
 import xyz.ldqc.tightcall.util.StringUtil;
 
 /**
@@ -92,7 +89,8 @@ public class BootApplicationContext {
    */
   private void loadReceiver() {
     int port = Integer.parseInt(config.getValue(ConfigEnum.PORT));
-    this.receiver = RequestReceiver.create(port, this.dataRepositoryApplication);
+    this.receiver = RequestReceiver.create(port, this.dataRepositoryApplication,
+        config.getValue(ConfigEnum.AUTH_KEY));
   }
 
   /**

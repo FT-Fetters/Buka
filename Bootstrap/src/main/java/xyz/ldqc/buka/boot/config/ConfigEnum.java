@@ -10,7 +10,8 @@ public enum ConfigEnum {
    */
   PORT("server.port", "8778"),
   DATA_REPOSITORY_STORAGE_LOCATION("data.repository.storage.location", null),
-  DATA_REPOSITORY_ENGINE("data.repository.engine", "xyz.ldqc.buka.data.repository.core.engine.support.BukaRepositoryEngine");
+  DATA_REPOSITORY_ENGINE("data.repository.engine", "xyz.ldqc.buka.data.repository.core.engine.support.BukaRepositoryEngine"),
+  AUTH_KEY("auth.key", "123456");
 
   private final String property;
 

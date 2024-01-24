@@ -1,7 +1,9 @@
 package xyz.ldqc.buka.receiver.server;
 
 import xyz.ldqc.buka.data.repository.DataRepositoryApplication;
+import xyz.ldqc.buka.receiver.server.chain.AuthVerifyChain;
 import xyz.ldqc.buka.receiver.server.chain.FilterRequestChain;
+import xyz.ldqc.buka.receiver.server.chain.HandleRequestChain;
 import xyz.ldqc.buka.receiver.server.chain.HttpExceptionCatchChain;
 import xyz.ldqc.tightcall.chain.ChainGroup;
 import xyz.ldqc.tightcall.chain.support.DefaultChannelChainGroup;
@@ -15,26 +17,29 @@ public class ReceiveServerApplication {
 
   private final HttpServerApplication httpServerApplication;
 
+
   private ReceiveServerApplication(HttpServerApplication httpServerApplication) {
     this.httpServerApplication = httpServerApplication;
   }
 
   public static ReceiveServerApplication boot(int port,
-      DataRepositoryApplication dataRepositoryApplication) {
+      DataRepositoryApplication dataRepositoryApplication, String authKey) {
     int availableProcessors = Runtime.getRuntime().availableProcessors();
     HttpServerApplication httpServer = HttpServerApplication.builder()
         .bind(port)
-        .chain(buildChainGroup(dataRepositoryApplication))
+        .chain(buildChainGroup(dataRepositoryApplication, authKey))
         .execNum(availableProcessors * 2)
         .executor(NioServerExec.class)
         .boot();
     return new ReceiveServerApplication(httpServer);
   }
 
-  private static ChainGroup buildChainGroup(DataRepositoryApplication dataRepositoryApplication) {
+  private static ChainGroup buildChainGroup(DataRepositoryApplication dataRepositoryApplication, String authKey) {
     ChainGroup chainGroup = new DefaultChannelChainGroup();
     chainGroup.addLast(new HttpExceptionCatchChain(chainGroup));
-    chainGroup.addLast(new FilterRequestChain(dataRepositoryApplication));
+    chainGroup.addLast(new FilterRequestChain(chainGroup));
+    chainGroup.addLast(new AuthVerifyChain(chainGroup, authKey));
+    chainGroup.addLast(new HandleRequestChain(dataRepositoryApplication));
     return chainGroup;
   }
 
