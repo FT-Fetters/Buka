@@ -175,6 +175,9 @@ public class BadBucket extends AbstractBucket {
     orgData = orgData.replaceFirst("BK_dm", "");
     String[] ls = orgData.split("\n");
     for (String l : ls) {
+      if (StringUtil.isBlank(l)){
+        continue;
+      }
       JSONObject j = new JSONObject();
       String[] sp = l.split(",");
       for (String s : sp) {
