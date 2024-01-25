@@ -18,6 +18,7 @@ public class RepositoryBuffer {
 
   private final String name;
 
+
   private final String repoPath;
 
   private final ConcurrentHashMap<String, AbstractBucket> bucketMap;
@@ -104,5 +105,8 @@ public class RepositoryBuffer {
     return matched.stream().map( f -> f.getName().replace("_dm.buk", "")).collect(Collectors.toList());
   }
 
+  public String getRepoPath() {
+    return repoPath;
+  }
 
 }
