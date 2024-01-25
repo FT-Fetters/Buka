@@ -31,6 +31,9 @@ public class ShowBucketActionHandler implements ActionHandler<ShowBucketAction>,
   public ActionResult handler(ShowBucketAction action) {
     String repoName = action.getRepoName();
     RepositoryBuffer repositoryBuffer = dataBufferPool.loadRepository(repoName);
+    if (repositoryBuffer == null){
+      return new ActionResult("unknown");
+    }
     List<String> allBucketNames = repositoryBuffer.getAllBucketNames();
     return new ActionResult("ok", allBucketNames);
   }
