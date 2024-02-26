@@ -19,23 +19,23 @@ import xyz.ldqc.tightcall.util.StringUtil;
 @RequestHandlerClass(path = "/del/repo", method = "POST")
 public class DeleteRepositoryRequestHandler implements DataRepositoryRequestHandler {
 
-  private DataRepositoryApplication dataRepositoryApplication;
+    private DataRepositoryApplication dataRepositoryApplication;
 
 
-  @Override
-  public void setDataRepositoryApplication(DataRepositoryApplication dataRepositoryApplication) {
-    this.dataRepositoryApplication = dataRepositoryApplication;
-  }
-
-  @Override
-  public HttpNioResponse doHandler(HttpNioRequest request) {
-    DeleteRepoEntity deleteRepoEntity = RequestUtil.body2Obj(request, DeleteRepoEntity.class);
-    String name = deleteRepoEntity.getName();
-    if (StringUtil.isBlank(name)) {
-      return Response.okJson(WebResponseEntity.fail("name cannot be empty"));
+    @Override
+    public void setDataRepositoryApplication(DataRepositoryApplication dataRepositoryApplication) {
+        this.dataRepositoryApplication = dataRepositoryApplication;
     }
-    DeleteRepoAction deleteRepoAction = new DeleteRepoAction(name);
-    ActionResult result = dataRepositoryApplication.execute(deleteRepoAction);
-    return Response.okJson(result);
-  }
+
+    @Override
+    public HttpNioResponse doHandler(HttpNioRequest request) {
+        DeleteRepoEntity deleteRepoEntity = RequestUtil.body2Obj(request, DeleteRepoEntity.class);
+        String name = deleteRepoEntity.getName();
+        if (StringUtil.isBlank(name)) {
+            return Response.okJson(WebResponseEntity.fail("name cannot be empty"));
+        }
+        DeleteRepoAction deleteRepoAction = new DeleteRepoAction(name);
+        ActionResult result = dataRepositoryApplication.execute(deleteRepoAction);
+        return Response.okJson(result);
+    }
 }

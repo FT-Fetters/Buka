@@ -13,46 +13,46 @@ import xyz.ldqc.tightcall.util.StringUtil;
  */
 public class RepositoryContext {
 
-  private final HandlerFactory handlerFactory;
+    private final HandlerFactory handlerFactory;
 
-  private RepositoryEngine engine;
+    private RepositoryEngine engine;
 
-  public RepositoryContext(DataRepositoryConfig config){
-    loadEngine(config);
-    this.handlerFactory = HandlerFactory.getInstance(engine);
-  }
-
-  private void loadEngine(DataRepositoryConfig config){
-    String storageLocation = config.getStorageLocation();
-    if (StringUtil.isBlank(storageLocation)){
-      storageLocation = config.getDefaultStorageLocation();
-      config.setStorageLocation(storageLocation);
+    public RepositoryContext(DataRepositoryConfig config) {
+        loadEngine(config);
+        this.handlerFactory = HandlerFactory.getInstance(engine);
     }
-    this.engine = doLoadEngine(config.getEngineClassName(), config);
-  }
 
-
-  /**
-   * 加载仓库引擎
-   *
-   * @param engineClassName 引擎类名
-   * @return RepositoryEngine
-   */
-  private RepositoryEngine doLoadEngine(String engineClassName, DataRepositoryConfig config) {
-    ClassLoader classLoader = ClassUtil.getClassLoader();
-    try {
-      Class<?> engineClass = classLoader.loadClass(engineClassName);
-      return (RepositoryEngine) engineClass.getConstructor(DataRepositoryConfig.class)
-          .newInstance(config);
-    } catch (ClassNotFoundException e) {
-      throw new ContextException("unknown engine class");
-    } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-             NoSuchMethodException e) {
-      throw new ContextException(e.getMessage());
+    private void loadEngine(DataRepositoryConfig config) {
+        String storageLocation = config.getStorageLocation();
+        if (StringUtil.isBlank(storageLocation)) {
+            storageLocation = config.getDefaultStorageLocation();
+            config.setStorageLocation(storageLocation);
+        }
+        this.engine = doLoadEngine(config.getEngineClassName(), config);
     }
-  }
 
-  public HandlerFactory getHandlerFactory() {
-    return handlerFactory;
-  }
+
+    /**
+     * 加载仓库引擎
+     *
+     * @param engineClassName 引擎类名
+     * @return RepositoryEngine
+     */
+    private RepositoryEngine doLoadEngine(String engineClassName, DataRepositoryConfig config) {
+        ClassLoader classLoader = ClassUtil.getClassLoader();
+        try {
+            Class<?> engineClass = classLoader.loadClass(engineClassName);
+            return (RepositoryEngine) engineClass.getConstructor(DataRepositoryConfig.class)
+                .newInstance(config);
+        } catch (ClassNotFoundException e) {
+            throw new ContextException("unknown engine class");
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                 NoSuchMethodException e) {
+            throw new ContextException(e.getMessage());
+        }
+    }
+
+    public HandlerFactory getHandlerFactory() {
+        return handlerFactory;
+    }
 }

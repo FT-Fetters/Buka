@@ -12,21 +12,21 @@ import xyz.ldqc.buka.boot.exception.ConfigLoaderException;
  */
 public class DefaultResourceLoader implements ResourceLoader {
 
-  private static final Logger log = LoggerFactory.getLogger(DefaultResourceLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultResourceLoader.class);
 
-  private final ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
-  public DefaultResourceLoader() {
-    this.classLoader = Thread.currentThread().getContextClassLoader();
-  }
-
-  @Override
-  public Resource load(String path) {
-    InputStream resourceStream = this.classLoader.getResourceAsStream(path);
-    if (resourceStream == null) {
-      throw new ConfigLoaderException("No such path (" + path + ")");
+    public DefaultResourceLoader() {
+        this.classLoader = Thread.currentThread().getContextClassLoader();
     }
-    log.info("load resource: \"{}\"", path);
-    return new Resource(path, resourceStream);
-  }
+
+    @Override
+    public Resource load(String path) {
+        InputStream resourceStream = this.classLoader.getResourceAsStream(path);
+        if (resourceStream == null) {
+            throw new ConfigLoaderException("No such path (" + path + ")");
+        }
+        log.info("load resource: \"{}\"", path);
+        return new Resource(path, resourceStream);
+    }
 }

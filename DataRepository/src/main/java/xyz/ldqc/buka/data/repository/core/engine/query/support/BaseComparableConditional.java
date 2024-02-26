@@ -58,7 +58,7 @@ public abstract class BaseComparableConditional implements Conditional {
   }
 
   private int stringCompare(Object obj) {
-    CharSequence charSequence = (CharSequence) obj;
+    CharSequence charSequence = (CharSequence) val;
     return obj.toString().compareTo(String.valueOf(charSequence));
   }
 

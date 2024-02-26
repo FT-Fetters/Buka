@@ -75,6 +75,14 @@ public class ConditionalConstruct {
     return this;
   }
 
+  public ConditionalConstruct or(Conditional orConditional){
+    MixMultipleConditional mix = new MixMultipleConditional();
+    mix.addConditional(rootConditional, BoolTypeEnum.AND);
+    mix.addConditional(orConditional, BoolTypeEnum.OR);
+    rootConditional = mix;
+    return this;
+  }
+
   public ConditionalConstruct textMatch(Object val){
     TextMatchConditional textMatchConditional = new TextMatchConditional(val);
     return addSimpleConditional(textMatchConditional);

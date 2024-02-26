@@ -1,10 +1,13 @@
 import com.alibaba.fastjson2.JSONObject;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 import org.junit.Test;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.BadBucket;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.Box;
 import xyz.ldqc.buka.data.repository.core.engine.buffer.BoxFactory;
+import xyz.ldqc.buka.data.repository.core.engine.query.Conditional;
+import xyz.ldqc.buka.data.repository.core.engine.query.ConditionalConstruct;
 import xyz.ldqc.buka.data.repository.core.engine.query.Sieve;
 import xyz.ldqc.buka.data.repository.core.engine.query.SieveBuilder;
 import xyz.ldqc.buka.data.repository.core.engine.structure.DataTypeEnum;
@@ -85,8 +88,10 @@ public class BucketTest {
       badBucket.put(j.toString());
     }
     Sieve sieve = SieveBuilder.get()
-        .set("name", "name", construct -> construct.textLimit(9, 10).getConditional())
-        .set("age", "age", construct -> construct.gt(0).getConditional())
+        .set("name", "name",
+            (Function<ConditionalConstruct, Conditional>) construct -> construct.textLimit(9, 10).getConditional())
+        .set("age", "age",
+            (Function<ConditionalConstruct, Conditional>) construct -> construct.gt(0).getConditional())
         .build();
     List<String> result = badBucket.find(sieve);
     Box box = BoxFactory.get()
@@ -116,8 +121,10 @@ public class BucketTest {
       badBucket.put(j.toString());
     }
     Sieve sieve = SieveBuilder.get()
-        .set("name", "name", construct -> construct.textLimit(0, 10).getConditional())
-        .set("age", "age", construct -> construct.gt(0).getConditional())
+        .set("name", "name",
+            (Function<ConditionalConstruct, Conditional>) construct -> construct.textLimit(9, 10).getConditional())
+        .set("age", "age",
+            (Function<ConditionalConstruct, Conditional>) construct -> construct.gt(0).getConditional())
         .build();
     List<String> result = badBucket.find(sieve);
     Box box = BoxFactory.get()
