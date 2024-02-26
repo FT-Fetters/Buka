@@ -24,14 +24,17 @@ public class Box {
 
   private final List<Object[]> items;
 
-  public Box(String[] boxLatticeName, DataTypeEnum[] boxLatticeType) {
+  private final String name;
+
+  public Box(String[] boxLatticeName, DataTypeEnum[] boxLatticeType, String name) {
     this.boxLatticeName = boxLatticeName;
     this.boxLatticeType = boxLatticeType;
     indexMap = new HashMap<>();
     items = new ArrayList<>();
-    for (String name : this.boxLatticeName) {
-      indexMap.put(name, new ConcurrentSkipListMap<>());
+    for (String latticeName : this.boxLatticeName) {
+      indexMap.put(latticeName, new ConcurrentSkipListMap<>());
     }
+    this.name = name;
   }
 
   public void put(String item) {
@@ -86,5 +89,9 @@ public class Box {
         "boxLatticeName=" + Arrays.toString(boxLatticeName) +
         ", boxLatticeType=" + Arrays.toString(boxLatticeType) +
         '}';
+  }
+
+  public String getName() {
+    return name;
   }
 }

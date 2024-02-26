@@ -12,7 +12,7 @@ public class BoxTest {
         .lattice("name", DataTypeEnum.NUMBER)
         .lattice("age", DataTypeEnum.STRING)
         .lattice("sex", DataTypeEnum.STRING)
-        .create();
+        .create("");
     box.put("{\"name\": 12}");
     System.out.println(box.toString());
   }
@@ -22,7 +22,7 @@ public class BoxTest {
     Box box = BoxFactory.get()
         .lattice("name", DataTypeEnum.STRING)
         .lattice("age", DataTypeEnum.NUMBER)
-        .create();
+        .create("");
     String[] names = {"tom", "mike", "anny", "jake", "aby"};
     int n = 5;
     for (int i = 0; i < n; i++) {
@@ -41,7 +41,7 @@ public class BoxTest {
         .lattice("field2", DataTypeEnum.STRING)
         .lattice("field3", DataTypeEnum.STRING)
         .lattice("field4", DataTypeEnum.STRING)
-        .create();
+        .create("");
     String[] field = {"field1", "field2", "field3", "field4"};
 
     String[] contents = {

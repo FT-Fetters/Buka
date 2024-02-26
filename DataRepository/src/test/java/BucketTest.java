@@ -97,7 +97,7 @@ public class BucketTest {
     Box box = BoxFactory.get()
         .lattice("name", DataTypeEnum.STRING)
         .lattice("age", DataTypeEnum.NUMBER)
-        .create();
+        .create("");
     box.putAll(result);
     result.forEach(s -> System.out.println(s));
   }
@@ -130,7 +130,7 @@ public class BucketTest {
     Box box = BoxFactory.get()
         .lattice("name", DataTypeEnum.STRING)
         .lattice("age", DataTypeEnum.NUMBER)
-        .create();
+        .create("");
     box.putAll(result);
     result.forEach(s -> System.out.println(s));
     System.out.println("-------------------------");
