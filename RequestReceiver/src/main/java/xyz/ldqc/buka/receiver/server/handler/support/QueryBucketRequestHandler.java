@@ -8,6 +8,7 @@ import xyz.ldqc.buka.data.repository.core.action.support.QueryBucketAction;
 import xyz.ldqc.buka.data.repository.core.engine.query.Sieve;
 import xyz.ldqc.buka.data.repository.core.engine.query.SieveBuilder;
 import xyz.ldqc.buka.data.repository.core.engine.query.SieveJsonParser;
+import xyz.ldqc.buka.data.repository.core.engine.query.support.TrueOnlyConditional;
 import xyz.ldqc.buka.receiver.entity.WebResponseEntity;
 import xyz.ldqc.buka.receiver.exception.BucketQueryException;
 import xyz.ldqc.buka.receiver.server.handler.DataRepositoryRequestHandler;
@@ -63,8 +64,10 @@ public class QueryBucketRequestHandler implements DataRepositoryRequestHandler {
                 throw new BucketQueryException("unknown name");
             }
 
-            if (condition != null) {
+            if (condition != null && !condition.isEmpty()) {
                 SieveJsonParser.parse(sieveBuilder, condition, name);
+            } else {
+                sieveBuilder.set(name, name, new TrueOnlyConditional());
             }
         });
         return sieveBuilder.build();
