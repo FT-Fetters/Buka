@@ -13,7 +13,8 @@ import xyz.ldqc.tightcall.protocol.http.HttpNioRequest;
 import xyz.ldqc.tightcall.protocol.http.HttpNioResponse;
 
 /**
- * @author LENOVO
+ * 创建Box请求处理器
+ * @author Fetters
  */
 @RequestHandlerClass(path = "/create/box", method = "POST")
 public class CreateBoxRequestHandler implements DataRepositoryRequestHandler {

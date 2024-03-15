@@ -13,6 +13,7 @@ import xyz.ldqc.tightcall.protocol.http.HttpNioResponse;
 import xyz.ldqc.tightcall.util.StringUtil;
 
 /**
+ * 获取桶列表请求处理器
  * @author Fetters
  */
 @RequestHandlerClass(path = "/show/bucket", method = "POST")

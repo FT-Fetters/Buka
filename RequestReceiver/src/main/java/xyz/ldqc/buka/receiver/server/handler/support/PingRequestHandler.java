@@ -8,6 +8,7 @@ import xyz.ldqc.tightcall.protocol.http.HttpNioRequest;
 import xyz.ldqc.tightcall.protocol.http.HttpNioResponse;
 
 /**
+ * 响应测试请求处理器
  * @author Fetters
  */
 @RequestHandlerClass(path = "/ping", method = "GET")

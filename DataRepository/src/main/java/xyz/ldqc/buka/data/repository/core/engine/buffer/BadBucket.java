@@ -92,6 +92,9 @@ public class BadBucket extends AbstractBucket {
     return dataLink;
   }
 
+  /**
+   * 将json字符串转换为json对象
+   */
   private JSONObject toJson(String json) {
     try {
       return JSONObject.parse(json);
@@ -100,6 +103,11 @@ public class BadBucket extends AbstractBucket {
     }
   }
 
+  /**
+   * 将内存中的数据把保存到磁盘中
+   * @param path 要存储的路径
+   * @param pass 加密
+   */
   @Override
   public boolean storage(String path, String pass) {
     File pathFile = new File(path);
@@ -116,6 +124,11 @@ public class BadBucket extends AbstractBucket {
     return true;
   }
 
+  /**
+   * 从桶中查找数据
+   * @param sieve 数据过滤器
+   * @return 返回从桶中过滤后的结果
+   */
   @Override
   public List<String> find(Sieve sieve) {
     Map<String, Entry<String, Conditional>> conditionalMap = sieve.getConditionalMap();
@@ -124,6 +137,12 @@ public class BadBucket extends AbstractBucket {
     return doFind(dataIdList, sieve);
   }
 
+  /**
+   * 从磁盘中加载数据
+   * @param path 数据在磁盘中路径
+   * @param name 桶名称
+   * @param pk   密钥
+   */
   @Override
   public int load(String path, String name, String pk) {
     if (StringUtil.isAnyBlank(path, name)) {

@@ -10,6 +10,7 @@ import xyz.ldqc.tightcall.protocol.http.HttpNioRequest;
 import xyz.ldqc.tightcall.protocol.http.HttpNioResponse;
 
 /**
+ * 获取仓库列表请求处理器
  * @author Fetters
  */
 @RequestHandlerClass(path = "/show/repo", method = "GET")

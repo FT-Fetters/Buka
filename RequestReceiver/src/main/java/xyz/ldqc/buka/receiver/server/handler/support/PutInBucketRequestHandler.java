@@ -12,6 +12,7 @@ import xyz.ldqc.tightcall.protocol.http.HttpNioRequest;
 import xyz.ldqc.tightcall.protocol.http.HttpNioResponse;
 
 /**
+ * 桶数据放入请求处理器
  * @author Fetters
  */
 @RequestHandlerClass(path = "/bucket/put", method = "POST")

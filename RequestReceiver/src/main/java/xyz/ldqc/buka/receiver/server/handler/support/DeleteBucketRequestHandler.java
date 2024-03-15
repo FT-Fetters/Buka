@@ -14,6 +14,7 @@ import xyz.ldqc.tightcall.protocol.http.HttpNioResponse;
 import xyz.ldqc.tightcall.util.StringUtil;
 
 /**
+ * 删除Bucket请求处理器
  * @author Fetters
  */
 @RequestHandlerClass(path = "/del/bucket", method = "POST")

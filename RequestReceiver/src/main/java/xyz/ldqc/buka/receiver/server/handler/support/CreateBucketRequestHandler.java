@@ -14,6 +14,7 @@ import xyz.ldqc.tightcall.protocol.http.HttpNioResponse;
 import xyz.ldqc.tightcall.util.StringUtil;
 
 /**
+ * 创建Bucket请求处理器
  * @author Fetters
  */
 @RequestHandlerClass(path = "/create/bucket", method = "POST")

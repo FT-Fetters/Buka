@@ -19,6 +19,7 @@ import xyz.ldqc.tightcall.protocol.http.HttpNioResponse;
 import xyz.ldqc.tightcall.util.StringUtil;
 
 /**
+ * 查询桶请求处理器
  * @author Fetters
  */
 @RequestHandlerClass(path = "/query/bucket", method = "POST")
@@ -45,6 +46,7 @@ public class QueryBucketRequestHandler implements DataRepositoryRequestHandler {
         if (StringUtil.isAnyBlank(repoName, bucketName)) {
             return Response.okJson(WebResponseEntity.fail("repo or bucket is empty"));
         }
+        // 获取查询的数据和查询条件，如果为空，无法知道要查询的数据是什么
         JSONArray query = bodyJson.getJSONArray("query");
         if (query == null) {
             return Response.okJson(WebResponseEntity.fail("query is empty"));
@@ -56,6 +58,9 @@ public class QueryBucketRequestHandler implements DataRepositoryRequestHandler {
         return Response.okJson(result);
     }
 
+    /**
+     * 构建查询条件
+     */
     private Sieve buildSieve(JSONArray query) {
         SieveBuilder sieveBuilder = SieveBuilder.get();
         query.forEach(o -> {
