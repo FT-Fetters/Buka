@@ -7,6 +7,11 @@ import xyz.ldqc.tightcall.protocol.http.HttpNioRequest;
  */
 public class RequestUtil {
 
+  private RequestUtil()
+  {
+    throw new UnsupportedOperationException();
+  }
+
   public static  <T> T body2Obj(HttpNioRequest request, Class<T> clazz){
     String body = request.getBody();
     return ObjectUtil.json2Obj(body, clazz);

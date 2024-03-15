@@ -22,16 +22,19 @@ public class DefaultConfigLoader implements ConfigLoader {
     doLoadConfig();
   }
 
+  /**
+   * 从Resource读取配置
+   */
   private void doLoadConfig(){
     InputStream inputStream = configResource.getInputStream();
-    Properties properties = new Properties();
+    Properties prop = new Properties();
     try {
-      properties.load(inputStream);
+      prop.load(inputStream);
       configResource.getInputStream().close();
     } catch (IOException e) {
       throw new ConfigLoaderException(e.getLocalizedMessage());
     }
-    this.properties = properties;
+    this.properties = prop;
   }
 
   @Override

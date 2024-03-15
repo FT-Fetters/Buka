@@ -5,6 +5,7 @@ import java.util.List;
 import xyz.ldqc.buka.data.repository.core.action.Action;
 
 /**
+ * Bucket放入数据Action
  * @author Fetters
  */
 public class BucketPutAction implements Action {

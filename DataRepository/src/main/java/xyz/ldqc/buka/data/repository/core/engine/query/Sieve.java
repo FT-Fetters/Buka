@@ -5,10 +5,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
+ * 筛选类，用于存放筛选条件
  * @author Fetters
  */
 public class Sieve {
 
+  /**
+   * 字段对应的筛选条件
+   */
   private final Map<String, Entry<String, Conditional>> conditionalMap;
 
   public Sieve(Map<String, Entry<String, Conditional>> conditionalMap){

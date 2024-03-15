@@ -3,6 +3,7 @@ package xyz.ldqc.buka.data.repository.core.action.support;
 import xyz.ldqc.buka.data.repository.core.action.Action;
 
 /**
+ * 创建Bucket Action
  * @author Fetters
  */
 public class CreateBucketAction implements Action {

@@ -16,6 +16,7 @@ import xyz.ldqc.buka.receiver.RequestReceiver;
 import xyz.ldqc.tightcall.util.StringUtil;
 
 /**
+ * 启动模块上下文
  * @author Fetters
  */
 public class BootApplicationContext {
@@ -60,6 +61,7 @@ public class BootApplicationContext {
     this.configLoader = new DefaultConfigLoader(configResource);
     ConfigEnum[] properties = ConfigEnum.values();
     this.config = new ConfigEntity();
+    // 依次遍历枚举类并尝试从配置实体中获取
     for (ConfigEnum property : properties) {
       String value = configLoader.getConfigItem(property.toString());
       if (StringUtil.isNotBlank(value)) {

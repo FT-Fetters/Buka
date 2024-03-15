@@ -98,7 +98,7 @@ public class BucketTest {
         .lattice("name", DataTypeEnum.STRING)
         .lattice("age", DataTypeEnum.NUMBER)
         .create("");
-    box.putAll(result);
+    box.putAll(result,false);
     result.forEach(s -> System.out.println(s));
   }
 
@@ -131,7 +131,7 @@ public class BucketTest {
         .lattice("name", DataTypeEnum.STRING)
         .lattice("age", DataTypeEnum.NUMBER)
         .create("");
-    box.putAll(result);
+    box.putAll(result,false);
     result.forEach(s -> System.out.println(s));
     System.out.println("-------------------------");
     badBucket.storage("F:\\迅雷下载",  null);

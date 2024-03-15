@@ -3,6 +3,7 @@ package xyz.ldqc.buka.data.repository.core.action.support;
 import xyz.ldqc.buka.data.repository.core.action.Action;
 
 /**
+ * 获取所有桶名
  * @author Fetters
  */
 public class ShowBucketAction implements Action {

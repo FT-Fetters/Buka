@@ -40,6 +40,7 @@ public class QueryBucketRequestHandler implements DataRepositoryRequestHandler {
         }
         String repoName = bodyJson.getString("repo");
         String bucketName = bodyJson.getString("bucket");
+        String box = bodyJson.getString("box");
 
         if (StringUtil.isAnyBlank(repoName, bucketName)) {
             return Response.okJson(WebResponseEntity.fail("repo or bucket is empty"));
@@ -50,7 +51,8 @@ public class QueryBucketRequestHandler implements DataRepositoryRequestHandler {
         }
 
         ActionResult result = dataRepositoryApplication.execute(
-            new QueryBucketAction(buildSieve(query), repoName, bucketName));
+            new QueryBucketAction(buildSieve(query), repoName, bucketName, box)
+        );
         return Response.okJson(result);
     }
 

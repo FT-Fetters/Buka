@@ -7,7 +7,9 @@ import com.alibaba.fastjson2.JSONObject;
  */
 public class ObjectUtil {
 
-  private ObjectUtil(){}
+  private ObjectUtil(){
+    throw new UnsupportedOperationException();
+  }
 
   public static  <T> T json2Obj(String json, Class<T> target){
     return JSONObject.parseObject(json, target);

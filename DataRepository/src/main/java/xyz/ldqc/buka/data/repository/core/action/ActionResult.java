@@ -1,12 +1,19 @@
 package xyz.ldqc.buka.data.repository.core.action;
 
 /**
+ * Action处理返回结果
  * @author Fetters
  */
 public class ActionResult {
 
-  private String msg;
+  /**
+   * 结果消息
+   */
+  private final String msg;
 
+  /**
+   * 结果返回数据
+   */
   private Object out;
 
   public ActionResult(String msg){

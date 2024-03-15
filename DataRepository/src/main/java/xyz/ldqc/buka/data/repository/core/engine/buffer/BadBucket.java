@@ -25,6 +25,7 @@ import xyz.ldqc.tightcall.buffer.SimpleByteData;
 import xyz.ldqc.tightcall.util.StringUtil;
 
 /**
+ * 混乱的桶，存入的数据是还未经过处理的桶，可以随意的放入数据
  * @author Fetters
  */
 public class BadBucket extends AbstractBucket {
@@ -36,7 +37,7 @@ public class BadBucket extends AbstractBucket {
   public BadBucket(String name) {
     this.fieldMap = new HashMap<>();
     if (StringUtil.isBlank(name)) {
-      throw new BadBucketException("name can not be null");
+      throw new BadBucketException("Name can not be null");
     }
     this.name = name;
     this.dataMapping = new ArrayList<>();
@@ -52,7 +53,7 @@ public class BadBucket extends AbstractBucket {
     doPut(json);
   }
 
-  public void doPut(JSONObject json) {
+  private void doPut(JSONObject json) {
     Set<Entry<String, Object>> entrySet = json.entrySet();
     if (entrySet.isEmpty()) {
       return;

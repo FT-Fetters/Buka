@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 配置实体类
  * @author Fetter
  */
 public class ConfigEntity {
