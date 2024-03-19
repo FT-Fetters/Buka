@@ -58,36 +58,44 @@ public class BadBucket extends AbstractBucket {
     if (entrySet.isEmpty()) {
       return;
     }
+    // 将数据放入数据映射中
     this.dataMapping.add(json);
+    // 获取数据的索引
     int index = this.dataMapping.lastIndexOf(json);
     handlerEntrySet(entrySet, index);
   }
 
-  private void handlerEntrySet(Set<Entry<String, Object>> entrySet, int id) {
-    entrySet.forEach(e -> handlerEachEntry(e, id));
+  private void handlerEntrySet(Set<Entry<String, Object>> entrySet, int idx) {
+    // 依次处理每个字段
+    entrySet.forEach(e -> handlerEachEntry(e, idx));
   }
 
-  private void handlerEachEntry(Entry<String, Object> entry, int id) {
+  private void handlerEachEntry(Entry<String, Object> entry, int idx) {
+    // 通过字段Entry获取DataLink
     DataLink<?> fieldDataLink = getFieldDataLink(entry);
     Class<?> dataType = fieldDataLink.getDataType();
     Object value = entry.getValue();
     if (!dataType.isAssignableFrom(value.getClass())) {
       throw new ClassCastException("Error type");
     }
-    long sectionId = fieldDataLink.addDataSection(id, value);
+    long sectionId = fieldDataLink.addDataSection(idx, value);
     entry.setValue(sectionId);
   }
 
   private DataLink<?> getFieldDataLink(Entry<String, Object> entry) {
     String key = entry.getKey();
     Object value = entry.getValue();
+    // 根据字段名获取DataLink
     DataLink<?> dataLink = this.fieldMap.get(key);
     if (dataLink == null) {
+      // 初始化字段对应的DataLink
       dataLink = new SkipListDataLink<>(value.getClass());
     }
+    // 类型判断
     if (!dataLink.getDataType().isAssignableFrom(value.getClass())) {
       throw new ClassCastException("Class type not match");
     }
+
     this.fieldMap.put(key, dataLink);
     return dataLink;
   }
