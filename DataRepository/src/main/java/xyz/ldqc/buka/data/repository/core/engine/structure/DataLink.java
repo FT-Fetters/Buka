@@ -12,8 +12,8 @@ public interface DataLink<T> {
   /**
    * 添加数据段
    * @param dataSourceId 源数据所在id
-   * @param sectionName 数据段名
    * @param section 数据段内容
+   * @return id
    */
   long addDataSection(long dataSourceId ,Object section);
 
