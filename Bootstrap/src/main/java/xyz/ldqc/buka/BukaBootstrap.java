@@ -20,4 +20,8 @@ public class BukaBootstrap {
     return bukaApplication;
   }
 
+  public static void main(String[] args) {
+    run();
+  }
+
 }

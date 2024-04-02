@@ -19,7 +19,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.example</groupId>
+      <groupId>xyz.ldqc</groupId>
       <artifactId>DataRepository</artifactId>
       <version>1.0-SNAPSHOT</version>
       <scope>compile</scope>

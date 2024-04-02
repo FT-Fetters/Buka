@@ -128,7 +128,7 @@ public class BootApplicationContext {
     if (!file.exists()) {
       boolean dirs = file.mkdirs();
       if (!dirs) {
-        throw new ContextException("cannot create dir");
+        throw new ContextException("cannot create dir: " + file.getAbsolutePath());
       }
       boolean writable = file.setWritable(true);
       if (!writable) {

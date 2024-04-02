@@ -1,6 +1,10 @@
 package xyz.ldqc.buka.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +46,48 @@ public class FileUtil {
 
     public static boolean isFile(File file) {
         return file.exists() && file.isFile();
+    }
+
+    /**
+     * 获取运行jar目录
+     */
+    public static String getJarPath() {
+        String path = FileUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        return path.substring(0, path.lastIndexOf("/")).replaceFirst("/", "");
+    }
+
+    /**
+     * 读取文件
+     */
+    public static String readFile(String filePath) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 保存文件
+     */
+    public static void saveFile(String filePath, String content) throws IOException {
+        try(FileWriter fw = new java.io.FileWriter(filePath)) {
+            fw.write(content);
+        }
+    }
+
+    /**
+     * 追加文件
+     */
+
+    public static void appendFile(String filePath, String content) throws IOException {
+        try(FileWriter fw = new FileWriter(filePath, true)) {
+
+            fw.write(content);
+        }
     }
 
 

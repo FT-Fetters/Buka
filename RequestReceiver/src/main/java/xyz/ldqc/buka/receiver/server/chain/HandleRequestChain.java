@@ -1,6 +1,5 @@
 package xyz.ldqc.buka.receiver.server.chain;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.nio.channels.Channel;
@@ -33,12 +32,8 @@ public class HandleRequestChain extends AbstractTransitiveInBoundChain{
     this.dataRepositoryApplication = dataRepositoryApplication;
     handlerMap = new HashMap<>();
     List<Class<?>> classes;
-    try {
       classes = PackageUtil.getPackageClasses(HANDLER_SUPPORT_PACKAGE);
-    } catch (IOException e) {
-      throw new ChainException(e.getMessage());
-    }
-    if (classes == null) {
+      if (classes == null) {
       return;
     }
     for (Class<?> clazz : classes) {
