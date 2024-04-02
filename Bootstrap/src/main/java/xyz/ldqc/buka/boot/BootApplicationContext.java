@@ -3,6 +3,8 @@ package xyz.ldqc.buka.boot;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.ldqc.buka.boot.config.ConfigEntity;
@@ -11,6 +13,7 @@ import xyz.ldqc.buka.boot.config.ConfigLoader;
 import xyz.ldqc.buka.boot.config.Resource;
 import xyz.ldqc.buka.boot.config.support.DefaultConfigLoader;
 import xyz.ldqc.buka.boot.config.support.DefaultResourceLoader;
+import xyz.ldqc.buka.boot.exception.DataConfigLoadException;
 import xyz.ldqc.buka.data.repository.DataRepositoryApplication;
 import xyz.ldqc.buka.data.repository.config.DataRepositoryConfig;
 import xyz.ldqc.buka.data.repository.exception.ContextException;
@@ -137,6 +140,24 @@ public class BootApplicationContext {
         // 仓库引擎
         String engineClass = config.getValue(ConfigEnum.DATA_REPOSITORY_ENGINE);
         repositoryConfig.setEngineClassName(engineClass);
+        // 集群
+        String clusterFlagStr = config.getValue(ConfigEnum.CLUSTER_FLAG);
+        boolean clusterFlag =
+            !StringUtil.isBlank(clusterFlagStr) && Boolean.parseBoolean(clusterFlagStr);
+        if (clusterFlag) {
+            repositoryConfig.setCluster(true);
+            String nodesStr = config.getValue(ConfigEnum.CLUSTER_NODES);
+            if (StringUtil.isBlank(nodesStr)) {
+                throw new DataConfigLoadException(
+                    "When cluster flag is true, cluster.nodes can not empty");
+            }
+            List<String> nodes = Arrays.asList(nodesStr.split(","));
+            if (nodes.isEmpty()) {
+                throw new DataConfigLoadException(
+                    "Cluster is open, but have no any node");
+            }
+            repositoryConfig.setNodes(nodes);
+        }
         return repositoryConfig;
     }
 

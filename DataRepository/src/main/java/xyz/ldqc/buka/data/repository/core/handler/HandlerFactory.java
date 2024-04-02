@@ -1,11 +1,12 @@
 package xyz.ldqc.buka.data.repository.core.handler;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.ldqc.buka.data.repository.core.action.Action;
 import xyz.ldqc.buka.data.repository.core.action.ActionResult;
 import xyz.ldqc.buka.data.repository.core.aware.DataBufferPoolAware;
@@ -20,6 +21,8 @@ import xyz.ldqc.tightcall.util.PackageUtil;
  */
 public class HandlerFactory {
 
+  private static final Logger log = LoggerFactory.getLogger(HandlerFactory.class);
+
   private static final String HANDLER_PACKAGE = "xyz.ldqc.buka.data.repository.core.handler.support";
 
   private final Map<Class<?>, ActionHandler<?>> handlerMap;
@@ -32,9 +35,10 @@ public class HandlerFactory {
     List<Class<?>> classes;
     try {
       classes = PackageUtil.getPackageClasses(HANDLER_PACKAGE);
+      log.debug("Load handler count: {}", classes.size());
       handlerMap = new HashMap<>();
       for (Class<?> clazz : classes) {
-        if (!Arrays.asList(clazz.getInterfaces()).contains(ActionHandler.class)) {
+        if (clazz == null || !Arrays.asList(clazz.getInterfaces()).contains(ActionHandler.class)) {
           continue;
         }
         ActionHandler<?> handler = (ActionHandler<?>) clazz.getConstructor().newInstance();
@@ -42,7 +46,7 @@ public class HandlerFactory {
         setHandlerAware(handler);
         handlerMap.put(actionClass, handler);
       }
-    } catch (IOException | InvocationTargetException | InstantiationException |
+    } catch (InvocationTargetException | InstantiationException |
              IllegalAccessException | NoSuchMethodException e) {
       throw new HandlerFactoryException("factory build fail: " + e.getMessage());
     }

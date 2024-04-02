@@ -21,7 +21,15 @@ public enum ConfigEnum {
   /**
    * 认证key
    */
-  AUTH_KEY("auth.key", "123456");
+  AUTH_KEY("auth.key", "123456"),
+  /**
+   * 是否开启集群
+   */
+  CLUSTER_FLAG("cluster.flag", "false"),
+  /**
+   * 集群节点
+   */
+  CLUSTER_NODES("cluster.nodes", null);
 
   private final String property;
 
