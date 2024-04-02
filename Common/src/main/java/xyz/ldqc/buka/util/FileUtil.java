@@ -11,33 +11,38 @@ import java.util.regex.Pattern;
  */
 public class FileUtil {
 
-  public static List<File> match(String path, String exp){
-    File pf = new File(path);
-    return match(pf, exp);
-  }
-
-  public static List<File> match(File pf, String exp) {
-    if (!pf.exists() || !pf.isDirectory()){
-      return Collections.emptyList();
+    private FileUtil() {
     }
-    File[] subFiles = pf.listFiles();
-    if (subFiles == null){
-      return Collections.emptyList();
+
+    public static List<File> match(String path, String exp) {
+        File pf = new File(path);
+        return match(pf, exp);
     }
-    List<File> r = new ArrayList<>();
-    for (File subFile : subFiles) {
-      if (Pattern.matches(exp, subFile.getName())){
-        r.add(subFile);
-      }
+
+    public static List<File> match(File pf, String exp) {
+        if (!pf.exists() || !pf.isDirectory()) {
+            return Collections.emptyList();
+        }
+        File[] subFiles = pf.listFiles();
+        if (subFiles == null) {
+            return Collections.emptyList();
+        }
+        List<File> r = new ArrayList<>();
+        for (File subFile : subFiles) {
+            if (Pattern.matches(exp, subFile.getName())) {
+                r.add(subFile);
+            }
+        }
+        return r;
     }
-    return r;
-  }
 
-  public static boolean isDir(File file){
-    return file.exists() && file.isDirectory();
-  }
+    public static boolean isDir(File file) {
+        return file.exists() && file.isDirectory();
+    }
 
-
+    public static boolean isFile(File file) {
+        return file.exists() && file.isFile();
+    }
 
 
 }

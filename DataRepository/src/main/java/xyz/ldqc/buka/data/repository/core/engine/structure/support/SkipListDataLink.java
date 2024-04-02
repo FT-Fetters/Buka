@@ -13,6 +13,7 @@ import xyz.ldqc.buka.data.repository.core.engine.structure.DataTypeEnum;
 import xyz.ldqc.tightcall.serializer.support.KryoSerializer;
 
 /**
+ * 基于跳表实现的DataLink
  * @author Fetters
  */
 public class SkipListDataLink<T> implements DataLink<T> {
@@ -44,6 +45,7 @@ public class SkipListDataLink<T> implements DataLink<T> {
   @Override
   @SuppressWarnings("unchecked")
   public long addDataSection(long dataSourceId, Object section) {
+    // 先判断类型是否匹配
     if (type.isAssignableFrom(section.getClass())) {
       T t = (T) section;
       return doAddDataSection(dataSourceId, t);
@@ -53,6 +55,7 @@ public class SkipListDataLink<T> implements DataLink<T> {
   }
 
   public long doAddDataSection(long dataSourceId, T section) {
+    // 存在id直接获取，不存在则通过自增方式获取
     long id = idMap.containsKey(section) ? idMap.get(section) : increaseId.getAndIncrement();
     DataId dataId = new DataId(id, section);
     List<Long> sectionList = this.dataMap.computeIfAbsent(dataId,

@@ -25,8 +25,7 @@ public class RepositoryContext {
     private void loadEngine(DataRepositoryConfig config) {
         String storageLocation = config.getStorageLocation();
         if (StringUtil.isBlank(storageLocation)) {
-            storageLocation = config.getDefaultStorageLocation();
-            config.setStorageLocation(storageLocation);
+            config.setStorageLocation(config.getDefaultStorageLocation());
         }
         this.engine = doLoadEngine(config.getEngineClassName(), config);
     }

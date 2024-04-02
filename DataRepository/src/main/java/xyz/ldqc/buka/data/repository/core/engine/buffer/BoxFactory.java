@@ -21,8 +21,6 @@ import xyz.ldqc.tightcall.util.StringUtil;
  */
 public class BoxFactory {
 
-    private static final Map<String, Box> BOX_MAP = new ConcurrentHashMap<>();
-
     private static final ThreadLocal<BoxDefinition> DEFINITION_THREAD_LOCAL = new InheritableThreadLocal<>();
 
     private static final BoxFactory FACTORY_INSTANCE = new BoxFactory();
@@ -97,16 +95,11 @@ public class BoxFactory {
         Box box = new Box(boxDefinition.getLatticeName().toArray(new String[]{}),
             boxDefinition.latticeType.toArray(new DataTypeEnum[]{}), name);
         DEFINITION_THREAD_LOCAL.remove();
-        BOX_MAP.put(name, box);
         return box;
     }
 
     public void clear() {
         DEFINITION_THREAD_LOCAL.remove();
-    }
-
-    public static Box getBox(String name) {
-        return BOX_MAP.get(name);
     }
 
 

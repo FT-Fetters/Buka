@@ -3,14 +3,12 @@ package xyz.ldqc.buka.data.repository.core.engine.buffer;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,6 +39,7 @@ public class Box {
     private final List<Object[]> items;
 
     private final String boxName;
+
 
     public Box(String[] boxLatticeName, DataTypeEnum[] boxLatticeType, String name) {
         this.boxLatticeName = boxLatticeName;
